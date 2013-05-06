@@ -10,7 +10,7 @@
 	<properties>
 		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<achilles.version>1.3-beta-SNAPSHOT</achilles.version>
+		<achilles.version>1.7-SNAPSHOT</achilles.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
 	</properties>
 

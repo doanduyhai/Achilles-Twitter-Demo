@@ -1,13 +1,17 @@
 package info.archinnov.achilles_twitter_like.factory;
 
-import info.archinnov.achilles.dao.GenericCompositeDao;
-import info.archinnov.achilles.dao.GenericDynamicCompositeDao;
+import info.archinnov.achilles.configuration.ConfigurationParameters;
+import info.archinnov.achilles.consistency.AchillesConfigurableConsistencyLevelPolicy;
+import info.archinnov.achilles.dao.GenericEntityDao;
+import info.archinnov.achilles.dao.GenericWideRowDao;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
-import info.archinnov.achilles.entity.manager.ThriftEntityManagerFactoryImpl;
+import info.archinnov.achilles.entity.manager.ThriftEntityManagerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import me.prettyprint.cassandra.service.CassandraHostConfigurator;
 import me.prettyprint.hector.api.Cluster;
@@ -21,6 +25,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.cassandraunit.DataLoader;
 import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +53,7 @@ public abstract class CassandraTestFactory
 	public static final Logger log = LoggerFactory.getLogger(CassandraTestFactory.class);
 
 	private static ThriftEntityManager em;
+	private static AchillesConfigurableConsistencyLevelPolicy policy;
 
 	static
 	{
@@ -91,8 +97,14 @@ public abstract class CassandraTestFactory
 					+ CASSANDRA_TEST_PORT);
 			keyspace = HFactory.createKeyspace(CASSANDRA_KEYSPACE_NAME, cluster);
 		}
-		ThriftEntityManagerFactoryImpl factory = new ThriftEntityManagerFactoryImpl(getCluster(),
-				getKeyspace(), ENTITY_PACKAGE, true);
+		Map<String, Object> configMap = new HashMap<String, Object>();
+		configMap.put(ConfigurationParameters.CLUSTER_PARAM, cluster);
+		configMap.put(ConfigurationParameters.KEYSPACE_PARAM, keyspace);
+		configMap.put(ConfigurationParameters.ENTITY_PACKAGES_PARAM, ENTITY_PACKAGE);
+		configMap.put(ConfigurationParameters.FORCE_CF_CREATION_PARAM, true);
+
+		ThriftEntityManagerFactory factory = new ThriftEntityManagerFactory(configMap);
+		policy = Whitebox.getInternalState(em, "consistencyPolicy");
 		em = (ThriftEntityManager) factory.createEntityManager();
 	}
 
@@ -129,15 +141,16 @@ public abstract class CassandraTestFactory
 		return em;
 	}
 
-	public static <K> GenericDynamicCompositeDao<K> getDynamicCompositeDao(
-			Serializer<K> keySerializer, String columnFamily)
+	public static <K> GenericEntityDao<K> getEntityDao(Serializer<K> keySerializer,
+			String columnFamily)
 	{
-		return new GenericDynamicCompositeDao<K>(keyspace, keySerializer, columnFamily);
+		return new GenericEntityDao<K>(cluster, keyspace, keySerializer, columnFamily, policy);
 	}
 
-	public static <K, V> GenericCompositeDao<K, V> getCompositeDao(Serializer<K> keySerializer,
+	public static <K, V> GenericWideRowDao<K, V> getCompositeDao(Serializer<K> keySerializer,
 			Serializer<V> valueSerializer, String columnFamily)
 	{
-		return new GenericCompositeDao<K, V>(keyspace, keySerializer, valueSerializer, columnFamily);
+		return new GenericWideRowDao<K, V>(cluster, keyspace, keySerializer, valueSerializer,
+				columnFamily, policy);
 	}
 }

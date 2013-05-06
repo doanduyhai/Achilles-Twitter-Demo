@@ -23,7 +23,7 @@
 			</property>
 			<property name="writeAcceptCharset" value="false"/>
 	</bean>
-	<bean class="info.archinnov.achilles_twitter_like.json.ObjectMapperFactory" />
+	<bean id="objectMapperFactory" class="info.archinnov.achilles_twitter_like.json.ObjectMapperFactory" />
 	<bean id="defaultMessageConverters" class="java.util.ArrayList">
 		<constructor-arg>
 	        <list>
@@ -40,11 +40,16 @@
 		<property name="messageConverters" ref="defaultMessageConverters"/>
 	</bean>
 	
-	 <bean id="achillesEntityManagerFactory" class="info.archinnov.achilles_twitter_like.factory.AchillesEntityManagerFactory">
+	<bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.integration.spring.ThriftEntityManagerFactoryBean"
+		init-method="initialize">
+		<property name="entityPackages" value="info.archinnov.achilles_twitter_like.entity"/>
 		<property name="cassandraHost" value="localhost:9160"/>
 		<property name="clusterName" value="Test Cluster"/>
 		<property name="keyspaceName" value="achilles"/>
-		<property name="entityPackages" value="info.archinnov.achilles_twitter_like.entity"/>
+
+		<property name="consistencyLevelReadDefault" value="ONE"/>
+		<property name="consistencyLevelWriteDefault" value="ONE"/>
 		<property name="forceColumnFamilyCreation" value="true" />
-	</bean>
+		<property name="ensureJoinConsistency" value="false" />
+	</bean>	
 </beans>

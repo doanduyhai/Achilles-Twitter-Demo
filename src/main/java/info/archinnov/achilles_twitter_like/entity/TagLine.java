@@ -1,6 +1,6 @@
 package info.archinnov.achilles_twitter_like.entity;
 
-import info.archinnov.achilles.annotations.ColumnFamily;
+import info.archinnov.achilles.annotations.WideRow;
 import info.archinnov.achilles.entity.type.WideMap;
 import info.archinnov.achilles_twitter_like.model.Tweet;
 
@@ -20,7 +20,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "tagline")
-@ColumnFamily
+@WideRow
 public class TagLine implements Serializable
 {
 	private static final long serialVersionUID = 1L;

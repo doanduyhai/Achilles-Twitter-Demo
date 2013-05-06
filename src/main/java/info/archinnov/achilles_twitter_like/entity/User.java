@@ -59,10 +59,10 @@ public class User implements Serializable
 	@Column
 	private Integer followersCount;
 
-	@Column
+	@Column(table = "timeline")
 	private WideMap<UUID, Tweet> timeline;
 
-	@Column
+	@Column(table = "userline")
 	private WideMap<UUID, Tweet> userline;
 
 	@JoinColumn(table = "friends")
