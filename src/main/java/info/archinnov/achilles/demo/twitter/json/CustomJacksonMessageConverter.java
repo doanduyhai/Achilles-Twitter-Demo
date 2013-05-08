@@ -1,4 +1,4 @@
-package info.archinnov.achilles_twitter_like.json;
+package info.archinnov.achilles.demo.twitter.json;
 
 import javax.annotation.PostConstruct;
 

@@ -1,7 +1,8 @@
-package info.archinnov.achilles_twitter_like.service;
+package info.archinnov.achilles.demo.twitter.service;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import info.archinnov.achilles.demo.twitter.service.TweetService;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,10 +18,10 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 
 @RunWith(MockitoJUnitRunner.class)
-public class AchillesTweetServiceTest
+public class TweetServiceTest
 {
 	@InjectMocks
-	private AchillesTweetService service = new AchillesTweetService();
+	private TweetService service = new TweetService();
 
 	@Test
 	public void should_extract_tags_from_tweet_content() throws Exception

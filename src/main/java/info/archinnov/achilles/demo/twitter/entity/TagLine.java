@@ -1,8 +1,8 @@
-package info.archinnov.achilles_twitter_like.entity;
+package info.archinnov.achilles.demo.twitter.entity;
 
 import info.archinnov.achilles.annotations.WideRow;
+import info.archinnov.achilles.demo.twitter.model.Tweet;
 import info.archinnov.achilles.entity.type.WideMap;
-import info.archinnov.achilles_twitter_like.model.Tweet;
 
 import java.io.Serializable;
 import java.util.UUID;

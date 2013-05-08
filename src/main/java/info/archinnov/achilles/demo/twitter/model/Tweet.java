@@ -1,8 +1,8 @@
-package info.archinnov.achilles_twitter_like.model;
+package info.archinnov.achilles.demo.twitter.model;
 
-import info.archinnov.achilles_twitter_like.entity.User;
-import info.archinnov.achilles_twitter_like.json.JsonDateDeserializer;
-import info.archinnov.achilles_twitter_like.json.JsonDateSerializer;
+import info.archinnov.achilles.demo.twitter.entity.User;
+import info.archinnov.achilles.demo.twitter.json.JsonDateDeserializer;
+import info.archinnov.achilles.demo.twitter.json.JsonDateSerializer;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package info.archinnov.achilles_twitter_like.json;
+package info.archinnov.achilles.demo.twitter.json;
 
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -14,11 +14,11 @@ import org.springframework.beans.factory.FactoryBean;
  * @author DuyHai DOAN
  * 
  */
-public class ObjectMapperFactory implements FactoryBean<ObjectMapper>
+public class ObjectMapperFactoryBean implements FactoryBean<ObjectMapper>
 {
 	private ObjectMapper objectMapper = null;
 
-	public ObjectMapperFactory() {
+	public ObjectMapperFactoryBean() {
 		this.objectMapper = new ObjectMapper();
 		this.objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
 		this.objectMapper
