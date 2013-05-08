@@ -26,13 +26,13 @@ public class TweetController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Tweet getTweet(@RequestParam String userLogin, @RequestParam String tweetId) {
-        return tweetService.getTweet(userLogin, tweetId);
+    public Tweet getTweet(@RequestParam String digest) {
+        return tweetService.getTweet(digest);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
-    public Tweet removeTweet(@RequestParam String userLogin, @RequestParam String tweetId) {
-        return tweetService.removeTweet(userLogin, tweetId);
+    public Tweet removeTweet(@RequestParam String digest) {
+        return tweetService.removeTweet(digest);
     }
 }
