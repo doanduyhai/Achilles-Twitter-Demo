@@ -1,6 +1,8 @@
 package info.archinnov.achilles.demo.twitter.service;
 
 import info.archinnov.achilles.demo.twitter.entity.User;
+import info.archinnov.achilles.demo.twitter.entity.widerow.FollowerLine;
+import info.archinnov.achilles.demo.twitter.entity.widerow.FriendLine;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
 import java.util.List;
 import javax.inject.Inject;
@@ -68,17 +70,15 @@ public class UserService {
     }
 
     public List<User> getFriends(String userLogin, int length) {
-        User user = loadUser(userLogin);
-
-        List<User> friends = user.getFriends().findFirstValues(length);
+        FriendLine wideRow = em.find(FriendLine.class, userLogin);
+        List<User> friends = wideRow.getFriends().findFirstValues(length);
         initCountersForSerialization(friends);
         return em.unproxy(friends);
     }
 
     public List<User> getFollowers(String userLogin, int length) {
-        User user = loadUser(userLogin);
-
-        List<User> followers = user.getFollowers().findFirstValues(length);
+        FollowerLine wideRow = em.find(FollowerLine.class, userLogin);
+        List<User> followers = wideRow.getFollowers().findFirstValues(length);
         initCountersForSerialization(followers);
         return em.unproxy(followers);
     }

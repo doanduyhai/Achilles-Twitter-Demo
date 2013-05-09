@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -43,25 +42,21 @@ public class User implements Serializable {
     @Column
     private Date accountCreationDate;
 
-    @JsonIgnore
     @Column
     private Counter tweetsCounter;
 
     private long tweetsCount;
 
-    @JsonIgnore
     @Column
     private Counter friendsCounter;
 
     private long friendsCount;
 
-    @JsonIgnore
     @Column
     private Counter followersCounter;
 
     private long followersCount;
 
-    @JsonIgnore
     @Column
     private Counter mentionsCounter;
 
