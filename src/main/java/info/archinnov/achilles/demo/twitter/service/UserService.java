@@ -2,6 +2,7 @@ package info.archinnov.achilles.demo.twitter.service;
 
 import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
+import java.util.List;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +67,22 @@ public class UserService {
 
     }
 
+    public List<User> getFriends(String userLogin, int length) {
+        User user = loadUser(userLogin);
+
+        List<User> friends = user.getFriends().findFirstValues(length);
+        initCountersForSerialization(friends);
+        return em.unproxy(friends);
+    }
+
+    public List<User> getFollowers(String userLogin, int length) {
+        User user = loadUser(userLogin);
+
+        List<User> followers = user.getFollowers().findFirstValues(length);
+        initCountersForSerialization(followers);
+        return em.unproxy(followers);
+    }
+
     public User getUser(String userLogin) {
 
         User user = loadUser(userLogin);
@@ -89,5 +106,11 @@ public class UserService {
         user.setFriendsCount(user.getFriendsCounter().get());
         user.setFollowersCount(user.getFollowersCounter().get());
         user.setMentionsCount(user.getMentionsCounter().get());
+    }
+
+    private void initCountersForSerialization(List<User> users) {
+        for (User user : users) {
+            initCountersForSerialization(user);
+        }
     }
 }

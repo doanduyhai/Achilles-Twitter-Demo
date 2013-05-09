@@ -47,7 +47,8 @@ public class LineController {
 
     @RequestMapping(value = "/tagline")
     @ResponseBody
-    public List<Tweet> getTagline(@RequestParam String tag, @RequestParam(defaultValue = "10") int length) {
+    public List<Tweet> getTagline(@RequestParam(required = true) String tag,
+            @RequestParam(defaultValue = "10") int length) {
         return lineService.getTagLine(tag, length);
     }
 }

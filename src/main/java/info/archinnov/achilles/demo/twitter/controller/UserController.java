@@ -2,6 +2,7 @@ package info.archinnov.achilles.demo.twitter.controller;
 
 import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.demo.twitter.service.UserService;
+import java.util.List;
 import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,5 +42,19 @@ public class UserController {
     public User removeFriend(@RequestParam(required = true) String userLogin,
             @RequestParam(required = true) String friendLogin) {
         return userService.removeFriend(userLogin, friendLogin);
+    }
+
+    @RequestMapping(value = "/friends", method = RequestMethod.GET)
+    @ResponseBody
+    public List<User> friends(@RequestParam(required = true) String userLogin,
+            @RequestParam(defaultValue = "10") int length) {
+        return userService.getFriends(userLogin, length);
+    }
+
+    @RequestMapping(value = "/followers", method = RequestMethod.GET)
+    @ResponseBody
+    public List<User> followers(@RequestParam(required = true) String userLogin,
+            @RequestParam(defaultValue = "10") int length) {
+        return userService.getFollowers(userLogin, length);
     }
 }
