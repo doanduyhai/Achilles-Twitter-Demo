@@ -1,27 +1,21 @@
 package info.archinnov.achilles.demo.twitter.service;
 
-import info.archinnov.achilles.demo.twitter.entity.TagLine;
 import info.archinnov.achilles.demo.twitter.entity.TweetIndex;
-import info.archinnov.achilles.demo.twitter.entity.TweetLine;
-import info.archinnov.achilles.demo.twitter.entity.TweetLine.TweetKey;
 import info.archinnov.achilles.demo.twitter.entity.User;
+import info.archinnov.achilles.demo.twitter.entity.widerow.FavoriteLine;
+import info.archinnov.achilles.demo.twitter.entity.widerow.MentionLine;
+import info.archinnov.achilles.demo.twitter.entity.widerow.TagLine;
+import info.archinnov.achilles.demo.twitter.entity.widerow.TimeLine;
 import info.archinnov.achilles.demo.twitter.model.Tweet;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
-import info.archinnov.achilles.entity.type.KeyValue;
 import info.archinnov.achilles.entity.type.KeyValueIterator;
 import info.archinnov.achilles.entity.type.WideMap;
-import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.inject.Inject;
 import me.prettyprint.cassandra.utils.TimeUUIDUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 /**
  * TweetAchillesService
@@ -35,7 +29,11 @@ public class TweetService {
     @Inject
     private ThriftEntityManager em;
 
-    private static final Pattern TAG_PATTERN = Pattern.compile("#(\\w+)");
+    @Inject
+    private UserService userService;
+
+    @Inject
+    private TweetParsingService tweetParsingService;
 
     public UUID createTweet(String authorLogin, String content) {
         User author = em.find(User.class, authorLogin);
@@ -46,136 +44,152 @@ public class TweetService {
 
         UUID uuid = TimeUUIDUtils.getUniqueTimeUUIDinMillis();
 
-        String digest = buildDigest(authorLogin, uuid);
-        String partitionKey = extractPartitionKey(digest);
+        Tweet tweet = new Tweet(uuid, author, content);
 
-        Tweet tweet = new Tweet(uuid, author, content, digest);
-
-        TweetLine tweetline = em.find(TweetLine.class, partitionKey);
-        tweetline.getTweets().insert(new TweetKey(digest, authorLogin, uuid), tweet);
-
+        //Initialize tweetIndex entity
         TweetIndex tweetIndex = em.find(TweetIndex.class, tweet.getId());
         if (tweetIndex == null) {
-            tweetIndex = em.merge(new TweetIndex(tweet.getId()));
+            tweetIndex = em.merge(new TweetIndex(tweet.getId(), tweet));
         }
 
-        spreadTweet(tweet, author, tweetIndex);
+        spreadTweetCreation(tweet, author, tweetIndex);
         spreadTags(tweet, tweetIndex);
+        spreadUserMention(tweet, tweetIndex);
 
         author.getTweetsCounter().incr();
 
         return uuid;
     }
 
-    public Tweet getTweet(String digest) {
-
-        TweetLine tweetline = em.find(TweetLine.class, extractPartitionKey(digest));
-        TweetKey key = new TweetKey(digest);
-        List<Tweet> found = tweetline.getTweets().findValues(key, key, 1);
-
-        return found.size() > 0 ? found.get(0) : null;
+    public Tweet getTweet(String tweetId) {
+        Tweet tweet = null;
+        TweetIndex tweetIndex = em.find(TweetIndex.class, UUID.fromString(tweetId));
+        if (tweetIndex != null) {
+            tweet = tweetIndex.getTweet();
+            tweet.setFavoritesCount(tweetIndex.getFavoritesCount().get());
+        }
+        return tweet;
     }
 
-    public Tweet removeTweet(String digest) {
-
-        TweetLine tweetline = em.find(TweetLine.class, extractPartitionKey(digest));
-        TweetKey key = new TweetKey(digest);
-        WideMap<TweetKey, Tweet> tweets = tweetline.getTweets();
-        List<KeyValue<TweetKey, Tweet>> keyValues = tweets.find(key, key, 1);
-
-        if (keyValues.size() == 0) {
-            throw new IllegalArgumentException("Cannot find tweet with digest '" + digest + "' to remove");
+    public TweetIndex fetchTweetIndex(String tweetId) {
+        TweetIndex tweetIndex = em.find(TweetIndex.class, UUID.fromString(tweetId));
+        if (tweetIndex == null) {
+            throw new IllegalArgumentException("Cannot find tweet with id '" + tweetId + "' to remove");
         }
+        return tweetIndex;
+    }
 
-        KeyValue<TweetKey, Tweet> found = keyValues.get(0);
-        key = found.getKey();
-        tweets.remove(key);
+    public Tweet removeTweet(String tweetId) {
 
-        String userLogin = key.getAuthor();
-        UUID tweetId = key.getId();
+        TweetIndex tweetIndex = fetchTweetIndex(tweetId);
 
-        User user = em.find(User.class, userLogin);
-        user.getUserline().remove(tweetId);
+        Tweet tweet = tweetIndex.getTweet();
+        UUID id = tweet.getId();
+
+        User user = em.find(User.class, tweet.getAuthor());
+        user.getUserline().remove(id);
         user.getTweetsCounter().decr();
-        spreadRemove(tweetId);
+        spreadTweetRemoval(tweetIndex);
 
-        return found.getValue();
+        em.remove(tweetIndex);
+
+        return tweet;
     }
 
-    public List<Tweet> getTagLine(String tag, int length) {
-        TagLine tagLine = em.find(TagLine.class, tag);
-        return tagLine.getTagline().findLastValues(length);
-    }
+    private void spreadTweetCreation(Tweet tweet, User user, TweetIndex tweetIndex) {
 
-    Set<String> extractTag(String content) {
-        Set<String> tagSet = new HashSet<String>();
-
-        Matcher matcher = TAG_PATTERN.matcher(content);
-        while (matcher.find()) {
-            String tag = matcher.group(1);
-            assert tag != null && !tag.isEmpty() && !tag.contains("#");
-            if (!tagSet.contains(tag)) {
-                tagSet.add(tag);
-            }
-        }
-        return tagSet;
-    }
-
-    private void spreadTweet(Tweet tweet, User user, TweetIndex tweetIndex) {
-        WideMap<String, User> timelineUsers = tweetIndex.getTimelineUsers();
-        timelineUsers.insert(user.getLogin(), user);
+        // Add current tweet to user timeline & userline
         user.getTimeline().insert(tweet.getId(), tweet);
         user.getUserline().insert(tweet.getId(), tweet);
+
+        // Index current tweet as in user timeline
+        WideMap<String, String> timelineUsers = tweetIndex.getTimelineUsers();
+        timelineUsers.insert(user.getLogin(), "");
 
         KeyValueIterator<String, User> followers = user.getFollowers().iterator(10);
         while (followers.hasNext()) {
             User follower = followers.nextValue();
+
+            //Add tweet to follower timeline
             follower.getTimeline().insert(tweet.getId(), tweet);
-            timelineUsers.insert(follower.getLogin(), follower);
+
+            // Index current tweet as in follower timeline
+            timelineUsers.insert(follower.getLogin(), "");
         }
     }
 
     private void spreadTags(Tweet tweet, TweetIndex tweetIndex) {
-        Set<String> extractedTags = this.extractTag(tweet.getContent());
+        Set<String> extractedTags = tweetParsingService.extractTags(tweet.getContent());
+
         for (String tag : extractedTags) {
             tweetIndex.getTags().insert(tag, "");
-            TagLine tagLine = em.find(TagLine.class, tag);
-            tagLine.getTagline().insert(tweet.getId(), tweet);
+
+            // Add tweet to tagline for each found tag
+            TagLine wideRow = em.find(TagLine.class, tag);
+            wideRow.getTagline().insert(tweet.getId(), tweet);
         }
     }
 
-    private void spreadRemove(UUID tweetId) {
+    private void spreadUserMention(Tweet tweet, TweetIndex tweetIndex) {
+        Set<String> extractedLogins = tweetParsingService.extractLogins(tweet.getContent());
 
-        TweetIndex tweetIndex = em.find(TweetIndex.class, tweetId);
-        KeyValueIterator<String, User> users = tweetIndex.getTimelineUsers().iterator();
-        while (users.hasNext()) {
-            User user = users.nextValue();
+        for (String userLogin : extractedLogins) {
+            User user = em.find(User.class, userLogin);
             if (user != null) {
-                user.getTimeline().remove(tweetId);
+                tweetIndex.getMentionlineUsers().insert(userLogin, "");
+
+                // Add tweet to user's mention line for each login found
+                user.getMentionline().insert(tweet.getId(), tweet);
+
+                //Increment user mention counter
+                user.getMentionsCounter().incr();
+            }
+        }
+    }
+
+    private void spreadTweetRemoval(TweetIndex tweetIndex) {
+
+        UUID tweetId = tweetIndex.getTweet().getId();
+
+        // Remove from all users timeline
+        KeyValueIterator<String, String> timelineUsers = tweetIndex.getTimelineUsers().iterator();
+        while (timelineUsers.hasNext()) {
+            String userLogin = timelineUsers.nextKey();
+            if (StringUtils.isNotBlank(userLogin)) {
+                TimeLine wideRow = em.find(TimeLine.class, userLogin);
+                wideRow.getTimeline().remove(tweetId);
             }
         }
 
+        // Remove from all users favoriteline
+        KeyValueIterator<String, String> favoritelineUsers = tweetIndex.getFavoritelineUsers().iterator();
+        while (favoritelineUsers.hasNext()) {
+            String userLogin = favoritelineUsers.nextKey();
+            if (StringUtils.isNotBlank(userLogin)) {
+                FavoriteLine wideRow = em.find(FavoriteLine.class, userLogin);
+                wideRow.getFavoriteline().remove(tweetId);
+            }
+        }
+
+        // Remove from all users mentionline
+        KeyValueIterator<String, String> mentionlineUsers = tweetIndex.getMentionlineUsers().iterator();
+        while (mentionlineUsers.hasNext()) {
+            String userLogin = mentionlineUsers.nextKey();
+            if (StringUtils.isNotBlank(userLogin)) {
+                MentionLine wideRow = em.find(MentionLine.class, userLogin);
+                wideRow.getMentionline().remove(tweetId);
+            }
+        }
+
+        // Remove from all taglines
         KeyValueIterator<String, String> tags = tweetIndex.getTags().iterator();
         while (tags.hasNext()) {
             String tag = tags.nextKey();
             if (StringUtils.isNotBlank(tag)) {
-                TagLine tagline = em.find(TagLine.class, tag);
-                tagline.getTagline().remove(tweetId);
+                TagLine wideRow = em.find(TagLine.class, tag);
+                wideRow.getTagline().remove(tweetId);
             }
         }
-        em.remove(tweetIndex);
-    }
 
-    private String buildDigest(String author, UUID id) {
-        try {
-            return DigestUtils.md5DigestAsHex((author + id.toString()).getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Cannot compute digest for user '" + author + "' and uuid '" + id
-                    + "'", e);
-        }
-    }
-
-    private String extractPartitionKey(String digest) {
-        return StringUtils.left(digest, 5);
     }
 }

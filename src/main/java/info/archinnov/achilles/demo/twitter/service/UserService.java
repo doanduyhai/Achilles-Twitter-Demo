@@ -1,9 +1,7 @@
 package info.archinnov.achilles.demo.twitter.service;
 
 import info.archinnov.achilles.demo.twitter.entity.User;
-import info.archinnov.achilles.demo.twitter.model.Tweet;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
-import java.util.List;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
@@ -77,17 +75,7 @@ public class UserService {
         return em.unproxy(user);
     }
 
-    public List<Tweet> getTimeline(String userLogin, int length) {
-        User user = loadUser(userLogin);
-        return user.getTimeline().findLastValues(length);
-    }
-
-    public List<Tweet> getUserline(String userLogin, int lenth) {
-        User user = loadUser(userLogin);
-        return user.getUserline().findLastValues(lenth);
-    }
-
-    private User loadUser(String userLogin) {
+    public User loadUser(String userLogin) {
         User user = em.find(User.class, userLogin);
 
         if (user == null) {
@@ -100,5 +88,6 @@ public class UserService {
         user.setTweetsCount(user.getTweetsCounter().get());
         user.setFriendsCount(user.getFriendsCounter().get());
         user.setFollowersCount(user.getFollowersCounter().get());
+        user.setMentionsCount(user.getMentionsCounter().get());
     }
 }

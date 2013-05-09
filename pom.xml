@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>info.archinnov</groupId>
 	<version>1.0-SNAPSHOT</version>
-	<name>achilles-twitter-like</name>
-	<artifactId>achilles-twitter-like</artifactId>
+	<name>achilles-twitter-demo</name>
+	<artifactId>achilles-twitter-demo</artifactId>
 	<packaging>war</packaging>
 
 	<properties>

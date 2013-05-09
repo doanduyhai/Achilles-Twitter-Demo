@@ -61,11 +61,23 @@ public class User implements Serializable {
 
     private long followersCount;
 
+    @JsonIgnore
+    @Column
+    private Counter mentionsCounter;
+
+    private long mentionsCount;
+
     @Column(table = "timeline")
     private WideMap<UUID, Tweet> timeline;
 
     @Column(table = "userline")
     private WideMap<UUID, Tweet> userline;
+
+    @Column(table = "favoriteline")
+    private WideMap<UUID, Tweet> favoriteline;
+
+    @Column(table = "mentionline")
+    private WideMap<UUID, Tweet> mentionline;
 
     @JoinColumn(table = "friends")
     @ManyToMany
@@ -133,32 +145,24 @@ public class User implements Serializable {
         return timeline;
     }
 
-    public void setTimeline(WideMap<UUID, Tweet> timeline) {
-        this.timeline = timeline;
-    }
-
     public WideMap<UUID, Tweet> getUserline() {
         return userline;
     }
 
-    public void setUserline(WideMap<UUID, Tweet> userline) {
-        this.userline = userline;
+    public WideMap<UUID, Tweet> getFavoriteline() {
+        return favoriteline;
+    }
+
+    public WideMap<UUID, Tweet> getMentionline() {
+        return mentionline;
     }
 
     public WideMap<String, User> getFriends() {
         return friends;
     }
 
-    public void setFriends(WideMap<String, User> friends) {
-        this.friends = friends;
-    }
-
     public WideMap<String, User> getFollowers() {
         return followers;
-    }
-
-    public void setFollowers(WideMap<String, User> followers) {
-        this.followers = followers;
     }
 
     public long getTweetsCount() {
@@ -183,5 +187,17 @@ public class User implements Serializable {
 
     public void setFollowersCount(long followersCount) {
         this.followersCount = followersCount;
+    }
+
+    public long getMentionsCount() {
+        return mentionsCount;
+    }
+
+    public void setMentionsCount(long mentionsCount) {
+        this.mentionsCount = mentionsCount;
+    }
+
+    public Counter getMentionsCounter() {
+        return mentionsCounter;
     }
 }

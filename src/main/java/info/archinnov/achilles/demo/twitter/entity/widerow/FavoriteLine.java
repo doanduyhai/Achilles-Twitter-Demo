@@ -1,4 +1,4 @@
-package info.archinnov.achilles.demo.twitter.entity;
+package info.archinnov.achilles.demo.twitter.entity.widerow;
 
 import info.archinnov.achilles.annotations.WideRow;
 import info.archinnov.achilles.demo.twitter.model.Tweet;
@@ -11,9 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "timeline")
+@Table(name = "favoriteline")
 @WideRow
-public class TimeLine implements Serializable {
+public class FavoriteLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ public class TimeLine implements Serializable {
     private String login;
 
     @Column
-    private WideMap<UUID, Tweet> timeline;
+    private WideMap<UUID, Tweet> favoriteline;
 
     public String getLogin() {
         return login;
@@ -31,7 +31,7 @@ public class TimeLine implements Serializable {
         this.login = login;
     }
 
-    public WideMap<UUID, Tweet> getTimeline() {
-        return timeline;
+    public WideMap<UUID, Tweet> getFavoriteline() {
+        return favoriteline;
     }
 }

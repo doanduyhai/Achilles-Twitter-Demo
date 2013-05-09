@@ -1,4 +1,4 @@
-package info.archinnov.achilles.demo.twitter.entity;
+package info.archinnov.achilles.demo.twitter.entity.widerow;
 
 import info.archinnov.achilles.annotations.WideRow;
 import info.archinnov.achilles.demo.twitter.model.Tweet;

@@ -11,33 +11,35 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping(value = "/user", produces = "application/json")
 public class UserController {
 
     @Inject
     private UserService userService;
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public User createUser(@RequestBody User lightUser) {
+    public User createUser(@RequestBody(required = true) User lightUser) {
         return userService.createUser(lightUser);
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public User getUser(@RequestParam String userLogin) {
+    public User getUser(@RequestParam(required = true) String userLogin) {
         return userService.getUser(userLogin);
     }
 
-    @RequestMapping(value = "/friend", method = RequestMethod.PUT, produces = "application/json")
+    @RequestMapping(value = "/friend", method = RequestMethod.PUT)
     @ResponseBody
-    public User addFriend(@RequestParam String userLogin, @RequestParam String friendLogin) {
+    public User addFriend(@RequestParam(required = true) String userLogin,
+            @RequestParam(required = true) String friendLogin) {
         return userService.addFriend(userLogin, friendLogin);
     }
 
-    @RequestMapping(value = "/friend", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/friend", method = RequestMethod.DELETE)
     @ResponseBody
-    public User removeFriend(@RequestParam String userLogin, @RequestParam String friendLogin) {
+    public User removeFriend(@RequestParam(required = true) String userLogin,
+            @RequestParam(required = true) String friendLogin) {
         return userService.removeFriend(userLogin, friendLogin);
     }
 }
