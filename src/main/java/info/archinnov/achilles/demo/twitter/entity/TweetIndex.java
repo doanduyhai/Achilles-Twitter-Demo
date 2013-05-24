@@ -1,8 +1,8 @@
 package info.archinnov.achilles.demo.twitter.entity;
 
 import info.archinnov.achilles.demo.twitter.model.Tweet;
-import info.archinnov.achilles.entity.type.Counter;
-import info.archinnov.achilles.entity.type.WideMap;
+import info.archinnov.achilles.type.Counter;
+import info.archinnov.achilles.type.WideMap;
 import java.io.Serializable;
 import java.util.UUID;
 import javax.persistence.Column;

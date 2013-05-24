@@ -3,7 +3,7 @@ package info.archinnov.achilles.demo.twitter.service;
 import info.archinnov.achilles.demo.twitter.entity.TweetIndex;
 import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.demo.twitter.model.Tweet;
-import info.archinnov.achilles.entity.type.WideMap;
+import info.archinnov.achilles.type.WideMap;
 import java.util.UUID;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
