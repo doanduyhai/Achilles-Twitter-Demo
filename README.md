@@ -8,7 +8,6 @@ This application is a Twitter clone back-end and offers a restful API. You need 
 2. **[Entity Modeling]**
     1. **[User]**
     2. **[Tweet Index]**
-    3. **[Wide Row]**
 3. **[Functional Features]**
     1. **[Posting a tweet]**
     2. **[Spreading tags and mentions]**

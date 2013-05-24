@@ -1,11 +1,12 @@
 package info.archinnov.achilles.demo.twitter.service;
 
 import info.archinnov.achilles.demo.twitter.entity.User;
-import info.archinnov.achilles.demo.twitter.entity.widerow.FollowerLine;
-import info.archinnov.achilles.demo.twitter.entity.widerow.FriendLine;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,102 +16,123 @@ import org.springframework.stereotype.Service;
  * 
  */
 @Service
-public class UserService {
+public class UserService
+{
 
-    @Inject
-    private ThriftEntityManager em;
+	@Inject
+	private ThriftEntityManager em;
 
-    public User createUser(User lightUser) {
-        if (em.find(User.class, lightUser.getLogin()) != null) {
-            throw new IllegalArgumentException("User with login '" + lightUser.getLogin() + "' already exists");
-        }
+	public User createUser(User lightUser)
+	{
+		if (em.find(User.class, lightUser.getLogin()) != null)
+		{
+			throw new IllegalArgumentException("User with login '" + lightUser.getLogin()
+					+ "' already exists");
+		}
 
-        User user = new User(lightUser.getLogin(), lightUser.getFirstname(), lightUser.getLastname());
-        em.persist(user);
-        return user;
-    }
+		User user = new User(lightUser.getLogin(), lightUser.getFirstname(),
+				lightUser.getLastname());
+		em.persist(user);
+		return user;
+	}
 
-    public User addFriend(String userLogin, String friendLogin) {
-        User user = loadUser(userLogin);
-        User friend = loadUser(friendLogin);
+	public User addFriend(String userLogin, String friendLogin)
+	{
+		User user = loadUser(userLogin);
+		User friend = loadUser(friendLogin);
 
-        if (user.getFriends().get(friendLogin) == null) {
-            user.getFriends().insert(friendLogin, friend);
-            user.getFriendsCounter().incr();
+		if (user.getFriends().get(friendLogin) == null)
+		{
+			user.getFriends().insert(friendLogin, friend);
+			user.getFriendsCounter().incr();
 
-            friend.getFollowers().insert(userLogin, user);
-            friend.getFollowersCounter().incr();
+			friend.getFollowers().insert(userLogin, user);
+			friend.getFollowersCounter().incr();
 
-            initCountersForSerialization(friend);
-            return em.unproxy(friend);
-        } else {
-            throw new IllegalArgumentException("User with login '" + userLogin + "' has '" + friendLogin
-                    + "' as friend already");
-        }
-    }
+			initCountersForSerialization(friend);
+			return em.unproxy(friend);
+		}
+		else
+		{
+			throw new IllegalArgumentException("User with login '" + userLogin + "' has '"
+					+ friendLogin + "' as friend already");
+		}
+	}
 
-    public User removeFriend(String userLogin, String friendLogin) {
-        User user = loadUser(userLogin);
-        User friend = loadUser(friendLogin);
+	public User removeFriend(String userLogin, String friendLogin)
+	{
+		User user = loadUser(userLogin);
+		User friend = loadUser(friendLogin);
 
-        if (user.getFriends().get(friendLogin) != null) {
-            user.getFriends().remove(friendLogin);
-            user.getFriendsCounter().decr();
+		if (user.getFriends().get(friendLogin) != null)
+		{
+			user.getFriends().remove(friendLogin);
+			user.getFriendsCounter().decr();
 
-            friend.getFollowers().remove(userLogin);
-            friend.getFollowersCounter().decr();
+			friend.getFollowers().remove(userLogin);
+			friend.getFollowersCounter().decr();
 
-            initCountersForSerialization(friend);
-            return em.unproxy(friend);
-        } else {
-            throw new IllegalArgumentException("User with login '" + userLogin + "' does not have '" + friendLogin
-                    + "' as friend");
-        }
+			initCountersForSerialization(friend);
+			return em.unproxy(friend);
+		}
+		else
+		{
+			throw new IllegalArgumentException("User with login '" + userLogin
+					+ "' does not have '" + friendLogin + "' as friend");
+		}
 
-    }
+	}
 
-    public List<User> getFriends(String userLogin, int length) {
-        FriendLine wideRow = em.find(FriendLine.class, userLogin);
-        List<User> friends = wideRow.getFriends().findFirstValues(length);
-        initCountersForSerialization(friends);
-        return em.unproxy(friends);
-    }
+	public List<User> getFriends(String userLogin, int length)
+	{
+		User user = em.getReference(User.class, userLogin);
+		List<User> friends = user.getFriends().findFirstValues(length);
+		initCountersForSerialization(friends);
+		return em.unproxy(friends);
+	}
 
-    public List<User> getFollowers(String userLogin, int length) {
-        FollowerLine wideRow = em.find(FollowerLine.class, userLogin);
-        List<User> followers = wideRow.getFollowers().findFirstValues(length);
-        initCountersForSerialization(followers);
-        return em.unproxy(followers);
-    }
+	public List<User> getFollowers(String userLogin, int length)
+	{
+		User user = em.getReference(User.class, userLogin);
+		List<User> followers = user.getFollowers().findFirstValues(length);
+		initCountersForSerialization(followers);
+		return em.unproxy(followers);
+	}
 
-    public User getUser(String userLogin) {
+	public User getUser(String userLogin)
+	{
 
-        User user = loadUser(userLogin);
-        em.initialize(user);
+		User user = loadUser(userLogin);
+		em.initialize(user);
 
-        initCountersForSerialization(user);
-        return em.unproxy(user);
-    }
+		initCountersForSerialization(user);
+		return em.unproxy(user);
+	}
 
-    public User loadUser(String userLogin) {
-        User user = em.find(User.class, userLogin);
+	public User loadUser(String userLogin)
+	{
+		User user = em.find(User.class, userLogin);
 
-        if (user == null) {
-            throw new IllegalArgumentException("User with login '" + userLogin + "' does no exist");
-        }
-        return user;
-    }
+		if (user == null)
+		{
+			throw new IllegalArgumentException("User with login '" + userLogin + "' does no exist");
+		}
+		return user;
+	}
 
-    private void initCountersForSerialization(User user) {
-        user.setTweetsCount(user.getTweetsCounter().get());
-        user.setFriendsCount(user.getFriendsCounter().get());
-        user.setFollowersCount(user.getFollowersCounter().get());
-        user.setMentionsCount(user.getMentionsCounter().get());
-    }
+	private void initCountersForSerialization(User user)
+	{
+		user.setTweetsCount(user.getTweetsCounter().get());
+		user.setFriendsCount(user.getFriendsCounter().get());
+		user.setFollowersCount(user.getFollowersCounter().get());
+		user.setMentionsCount(user.getMentionsCounter().get());
+	}
 
-    private void initCountersForSerialization(List<User> users) {
-        for (User user : users) {
-            initCountersForSerialization(user);
-        }
-    }
+	private void initCountersForSerialization(List<User> users)
+	{
+		for (User user : users)
+		{
+			initCountersForSerialization(user);
+		}
+	}
 }
