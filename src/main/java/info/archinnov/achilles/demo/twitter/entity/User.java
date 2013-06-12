@@ -78,6 +78,10 @@ public class User implements Serializable {
     @ManyToMany
     private WideMap<String, User> friends;
 
+    @Column(table = "followers")
+    @ManyToMany
+    private WideMap<String, String> followersLogin;
+
     @JoinColumn(table = "followers")
     @ManyToMany
     private WideMap<String, User> followers;
@@ -154,6 +158,10 @@ public class User implements Serializable {
 
     public WideMap<String, User> getFriends() {
         return friends;
+    }
+
+    public WideMap<String, String> getFollowersLogin() {
+        return followersLogin;
     }
 
     public WideMap<String, User> getFollowers() {

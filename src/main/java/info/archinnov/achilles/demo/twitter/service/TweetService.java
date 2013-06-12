@@ -103,15 +103,16 @@ public class TweetService {
         WideMap<String, String> timelineUsers = tweetIndex.getTimelineUsers();
         timelineUsers.insert(user.getLogin(), "");
 
-        KeyValueIterator<String, User> followers = user.getFollowers().iterator(10);
-        while (followers.hasNext()) {
-            User follower = followers.nextValue();
+        KeyValueIterator<String, String> followersLogin = user.getFollowersLogin().iterator(10);
+        while (followersLogin.hasNext()) {
+            String followerLogin = followersLogin.nextValue();
+            User follower = em.getReference(User.class, followerLogin);
 
             // Add tweet to follower timeline
             follower.getTimeline().insert(tweet.getId(), tweet);
 
             // Index current tweet as in follower timeline
-            timelineUsers.insert(follower.getLogin(), "");
+            timelineUsers.insert(followerLogin, "");
         }
     }
 
