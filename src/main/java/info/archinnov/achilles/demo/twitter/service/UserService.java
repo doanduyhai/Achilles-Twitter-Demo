@@ -50,7 +50,7 @@ public class UserService
 			friend.getFollowersCounter().incr();
 
 			initCountersForSerialization(friend);
-			return em.unproxy(friend);
+			return em.unwrap(friend);
 		}
 		else
 		{
@@ -73,7 +73,7 @@ public class UserService
 			friend.getFollowersCounter().decr();
 
 			initCountersForSerialization(friend);
-			return em.unproxy(friend);
+			return em.unwrap(friend);
 		}
 		else
 		{
@@ -88,7 +88,7 @@ public class UserService
 		User user = em.getReference(User.class, userLogin);
 		List<User> friends = user.getFriends().findFirstValues(length);
 		initCountersForSerialization(friends);
-		return em.unproxy(friends);
+		return em.unwrap(friends);
 	}
 
 	public List<User> getFollowers(String userLogin, int length)
@@ -96,7 +96,7 @@ public class UserService
 		User user = em.getReference(User.class, userLogin);
 		List<User> followers = user.getFollowers().findFirstValues(length);
 		initCountersForSerialization(followers);
-		return em.unproxy(followers);
+		return em.unwrap(followers);
 	}
 
 	public User getUser(String userLogin)
@@ -106,7 +106,7 @@ public class UserService
 		em.initialize(user);
 
 		initCountersForSerialization(user);
-		return em.unproxy(user);
+		return em.unwrap(user);
 	}
 
 	public User loadUser(String userLogin)
