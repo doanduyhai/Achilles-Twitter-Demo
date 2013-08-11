@@ -6,7 +6,7 @@ import info.archinnov.achilles.demo.twitter.entity.line.tweet.MentionLine;
 import info.archinnov.achilles.demo.twitter.entity.line.tweet.TagLine;
 import info.archinnov.achilles.demo.twitter.entity.line.tweet.TimeLine;
 import info.archinnov.achilles.demo.twitter.entity.line.tweet.UserLine;
-import info.archinnov.achilles.demo.twitter.model.Tweet;
+import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import info.archinnov.achilles.entity.manager.ThriftEntityManager;
 import info.archinnov.achilles.type.OrderingMode;
 import java.util.List;
@@ -25,25 +25,25 @@ public class LineService
     @Inject
     private ThriftEntityManager em;
 
-    private Function<AbstractTweetLine, Tweet> lineToTweet = new Function<AbstractTweetLine, Tweet>() {
+    private Function<AbstractTweetLine, TweetModel> lineToTweet = new Function<AbstractTweetLine, TweetModel>() {
 
         @Override
-        public Tweet apply(AbstractTweetLine line)
+        public TweetModel apply(AbstractTweetLine line)
         {
             return line.getTweet();
         }
     };
 
-    private Function<TagLine, Tweet> tagLineToTweet = new Function<TagLine, Tweet>() {
+    private Function<TagLine, TweetModel> tagLineToTweet = new Function<TagLine, TweetModel>() {
 
         @Override
-        public Tweet apply(TagLine line)
+        public TweetModel apply(TagLine line)
         {
             return line.getTweet();
         }
     };
 
-    public List<Tweet> getTimeline(String userLogin, int length)
+    public List<TweetModel> getTimeline(String userLogin, int length)
     {
         List<TimeLine> timeline = fetchData(TimeLine.class, userLogin, length);
 
@@ -53,7 +53,7 @@ public class LineService
                 .toImmutableList();
     }
 
-    public List<Tweet> getUserline(String userLogin, int length)
+    public List<TweetModel> getUserline(String userLogin, int length)
     {
         List<UserLine> userline = fetchData(UserLine.class, userLogin, length);
 
@@ -63,7 +63,7 @@ public class LineService
                 .toImmutableList();
     }
 
-    public List<Tweet> getFavoriteLine(String userLogin, int length)
+    public List<TweetModel> getFavoriteLine(String userLogin, int length)
     {
         List<FavoriteLine> favoriteline = fetchData(FavoriteLine.class, userLogin, length);
 
@@ -73,7 +73,7 @@ public class LineService
                 .toImmutableList();
     }
 
-    public List<Tweet> getMentionLine(String userLogin, int length)
+    public List<TweetModel> getMentionLine(String userLogin, int length)
     {
         List<MentionLine> mentionline = fetchData(MentionLine.class, userLogin, length);
 
@@ -83,7 +83,7 @@ public class LineService
                 .toImmutableList();
     }
 
-    public List<Tweet> getTagLine(String tag, int length)
+    public List<TweetModel> getTagLine(String tag, int length)
     {
         List<TagLine> tagline = fetchData(TagLine.class, tag, length);
 

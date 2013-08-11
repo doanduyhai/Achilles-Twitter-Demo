@@ -1,7 +1,7 @@
 package info.archinnov.achilles.demo.twitter.entity.line.tweet;
 
 import info.archinnov.achilles.demo.twitter.entity.compound.TagKey;
-import info.archinnov.achilles.demo.twitter.model.Tweet;
+import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -21,14 +21,14 @@ public class TagLine {
     private TagKey id;
 
     @Column
-    private Tweet tweet;
+    private TweetModel tweetModel;
 
     public TagLine() {
     }
 
-    public TagLine(String tag, Tweet tweet) {
-        this.id = new TagKey(tag, tweet.getId());
-        this.tweet = tweet;
+    public TagLine(String tag, TweetModel tweetModel) {
+        this.id = new TagKey(tag, tweetModel.getId());
+        this.tweetModel = tweetModel;
     }
 
     public TagKey getId() {
@@ -39,12 +39,12 @@ public class TagLine {
         this.id = id;
     }
 
-    public Tweet getTweet() {
-        return tweet;
+    public TweetModel getTweet() {
+        return tweetModel;
     }
 
-    public void setTweet(Tweet tweet) {
-        this.tweet = tweet;
+    public void setTweet(TweetModel tweetModel) {
+        this.tweetModel = tweetModel;
     }
 
 }

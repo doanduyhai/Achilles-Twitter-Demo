@@ -1,6 +1,6 @@
 package info.archinnov.achilles.demo.twitter.controller;
 
-import info.archinnov.achilles.demo.twitter.model.Tweet;
+import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import info.archinnov.achilles.demo.twitter.service.FavoriteService;
 import info.archinnov.achilles.demo.twitter.service.TweetService;
 import java.util.UUID;
@@ -33,13 +33,13 @@ public class TweetController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Tweet getTweet(@RequestParam(required = true) String tweetId) {
+    public TweetModel getTweet(@RequestParam(required = true) String tweetId) {
         return tweetService.getTweet(tweetId);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
     @ResponseBody
-    public Tweet removeTweet(@RequestParam(required = true) String tweetId) {
+    public TweetModel removeTweet(@RequestParam(required = true) String tweetId) {
         return tweetService.removeTweet(tweetId);
     }
 

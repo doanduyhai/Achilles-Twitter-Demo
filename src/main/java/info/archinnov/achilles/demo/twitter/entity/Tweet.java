@@ -1,6 +1,6 @@
 package info.archinnov.achilles.demo.twitter.entity;
 
-import info.archinnov.achilles.demo.twitter.model.Tweet;
+import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import info.archinnov.achilles.type.Counter;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -15,8 +15,8 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name = "tweet_index")
-public class TweetIndex {
+@Table(name = "tweet")
+public class Tweet {
 
     @Id
     private UUID id;
@@ -25,14 +25,14 @@ public class TweetIndex {
     private Counter favoritesCount;
 
     @Column
-    private Tweet tweet;
+    private TweetModel tweetModel;
 
-    public TweetIndex() {
+    public Tweet() {
     }
 
-    public TweetIndex(UUID id, Tweet tweet) {
+    public Tweet(UUID id, TweetModel tweetModel) {
         this.id = id;
-        this.tweet = tweet;
+        this.tweetModel = tweetModel;
     }
 
     public UUID getId() {
@@ -43,12 +43,12 @@ public class TweetIndex {
         this.id = id;
     }
 
-    public Tweet getTweet() {
-        return tweet;
+    public TweetModel getTweet() {
+        return tweetModel;
     }
 
-    public void setTweet(Tweet tweet) {
-        this.tweet = tweet;
+    public void setTweet(TweetModel tweetModel) {
+        this.tweetModel = tweetModel;
     }
 
     public Counter getFavoritesCount() {

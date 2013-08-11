@@ -16,7 +16,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * @author DuyHai DOAN
  * 
  */
-public class Tweet implements Serializable {
+public class TweetModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,10 +32,10 @@ public class Tweet implements Serializable {
     @JsonSerialize(using = JsonDateSerializer.class)
     private Date creationDate;
 
-    public Tweet() {
+    public TweetModel() {
     }
 
-    public Tweet(UUID id, User creator, String content) {
+    public TweetModel(UUID id, User creator, String content) {
         this.id = id;
         if (id != null) {
             this.creationDate = new Date(TimeUUIDUtils.getTimeFromUUID(id));

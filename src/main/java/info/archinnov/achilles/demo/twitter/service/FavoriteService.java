@@ -1,6 +1,6 @@
 package info.archinnov.achilles.demo.twitter.service;
 
-import info.archinnov.achilles.demo.twitter.entity.TweetIndex;
+import info.archinnov.achilles.demo.twitter.entity.Tweet;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetIndexKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
 import info.archinnov.achilles.demo.twitter.entity.index.TweetFavoriteLineIndex;
@@ -24,29 +24,29 @@ public class FavoriteService {
 
     public void addTweetToFavorite(String userLogin, String tweetId) {
 
-        TweetIndex tweetIndex = tweetService.fetchTweetIndex(tweetId);
+        Tweet tweet = tweetService.fetchTweetIndex(tweetId);
         UUID id = UUID.fromString(tweetId);
 
         FavoriteLine favoriteLine = em.find(FavoriteLine.class, new TweetKey(userLogin, id));
 
         if (favoriteLine == null) {
-            em.persist(new FavoriteLine(userLogin, tweetIndex.getTweet()));
+            em.persist(new FavoriteLine(userLogin, tweet.getTweet()));
             em.persist(new TweetFavoriteLineIndex(id, userLogin));
-            tweetIndex.getFavoritesCount().incr();
+            tweet.getFavoritesCount().incr();
         }
     }
 
     public void removeTweetFromFavorite(String userLogin, String tweetId) {
 
-        TweetIndex tweetIndex = tweetService.fetchTweetIndex(tweetId);
-        UUID id = tweetIndex.getId();
+        Tweet tweet = tweetService.fetchTweetIndex(tweetId);
+        UUID id = tweet.getId();
 
         FavoriteLine favoriteLine = em.find(FavoriteLine.class, new TweetKey(userLogin, id));
 
         if (favoriteLine != null) {
             em.remove(favoriteLine);
             em.removeById(TweetFavoriteLineIndex.class, new TweetIndexKey(id, userLogin));
-            tweetIndex.getFavoritesCount().decr();
+            tweet.getFavoritesCount().decr();
         }
     }
 }

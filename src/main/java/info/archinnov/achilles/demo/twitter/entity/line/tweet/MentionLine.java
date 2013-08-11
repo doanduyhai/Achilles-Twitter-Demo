@@ -1,7 +1,7 @@
 package info.archinnov.achilles.demo.twitter.entity.line.tweet;
 
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
-import info.archinnov.achilles.demo.twitter.model.Tweet;
+import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -18,9 +18,9 @@ public class MentionLine extends AbstractTweetLine {
     public MentionLine() {
     }
 
-    public MentionLine(String login, Tweet tweet) {
-        this.id = new TweetKey(login, tweet.getId());
-        this.tweet = tweet;
+    public MentionLine(String login, TweetModel tweetModel) {
+        this.id = new TweetKey(login, tweetModel.getId());
+        this.tweetModel = tweetModel;
     }
 
 }
