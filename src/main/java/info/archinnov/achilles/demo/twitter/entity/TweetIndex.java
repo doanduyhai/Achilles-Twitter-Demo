@@ -2,13 +2,10 @@ package info.archinnov.achilles.demo.twitter.entity;
 
 import info.archinnov.achilles.demo.twitter.model.Tweet;
 import info.archinnov.achilles.type.Counter;
-import info.archinnov.achilles.type.WideMap;
-import java.io.Serializable;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -19,9 +16,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "tweet_index")
-public class TweetIndex implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class TweetIndex {
 
     @Id
     private UUID id;
@@ -31,20 +26,6 @@ public class TweetIndex implements Serializable {
 
     @Column
     private Tweet tweet;
-
-    @ManyToMany
-    @Column(table = "tweet_user_timeline_index")
-    private WideMap<String, String> timelineUsers;
-
-    @ManyToMany
-    @Column(table = "tweet_user_favoriteline_index")
-    private WideMap<String, String> favoritelineUsers;
-
-    @Column(table = "tweet_user_mentionline_index")
-    private WideMap<String, String> mentionlineUsers;
-
-    @Column(table = "tweet_tag_index")
-    private WideMap<String, String> tags;
 
     public TweetIndex() {
     }
@@ -74,19 +55,8 @@ public class TweetIndex implements Serializable {
         return favoritesCount;
     }
 
-    public WideMap<String, String> getTimelineUsers() {
-        return timelineUsers;
+    public void setFavoritesCount(Counter favoritesCount) {
+        this.favoritesCount = favoritesCount;
     }
 
-    public WideMap<String, String> getTags() {
-        return tags;
-    }
-
-    public WideMap<String, String> getFavoritelineUsers() {
-        return favoritelineUsers;
-    }
-
-    public WideMap<String, String> getMentionlineUsers() {
-        return mentionlineUsers;
-    }
 }

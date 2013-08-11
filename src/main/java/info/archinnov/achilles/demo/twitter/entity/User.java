@@ -2,17 +2,11 @@ package info.archinnov.achilles.demo.twitter.entity;
 
 import info.archinnov.achilles.demo.twitter.json.JsonDateDeserializer;
 import info.archinnov.achilles.demo.twitter.json.JsonDateSerializer;
-import info.archinnov.achilles.demo.twitter.model.Tweet;
 import info.archinnov.achilles.type.Counter;
-import info.archinnov.achilles.type.WideMap;
-import java.io.Serializable;
 import java.util.Date;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -25,8 +19,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @Entity
 @Table(name = "user")
-public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class User {
 
     @Id
     private String login;
@@ -61,30 +54,6 @@ public class User implements Serializable {
     private Counter mentionsCounter;
 
     private long mentionsCount;
-
-    @Column(table = "timeline")
-    private WideMap<UUID, Tweet> timeline;
-
-    @Column(table = "userline")
-    private WideMap<UUID, Tweet> userline;
-
-    @Column(table = "favoriteline")
-    private WideMap<UUID, Tweet> favoriteline;
-
-    @Column(table = "mentionline")
-    private WideMap<UUID, Tweet> mentionline;
-
-    @JoinColumn(table = "friends")
-    @ManyToMany
-    private WideMap<String, User> friends;
-
-    @Column(table = "followers")
-    @ManyToMany
-    private WideMap<String, String> followersLogin;
-
-    @JoinColumn(table = "followers")
-    @ManyToMany
-    private WideMap<String, User> followers;
 
     public User() {
     }
@@ -132,40 +101,24 @@ public class User implements Serializable {
         return tweetsCounter;
     }
 
+    public void setTweetsCounter(Counter tweetsCounter) {
+        this.tweetsCounter = tweetsCounter;
+    }
+
     public Counter getFriendsCounter() {
         return friendsCounter;
+    }
+
+    public void setFriendsCounter(Counter friendsCounter) {
+        this.friendsCounter = friendsCounter;
     }
 
     public Counter getFollowersCounter() {
         return followersCounter;
     }
 
-    public WideMap<UUID, Tweet> getTimeline() {
-        return timeline;
-    }
-
-    public WideMap<UUID, Tweet> getUserline() {
-        return userline;
-    }
-
-    public WideMap<UUID, Tweet> getFavoriteline() {
-        return favoriteline;
-    }
-
-    public WideMap<UUID, Tweet> getMentionline() {
-        return mentionline;
-    }
-
-    public WideMap<String, User> getFriends() {
-        return friends;
-    }
-
-    public WideMap<String, String> getFollowersLogin() {
-        return followersLogin;
-    }
-
-    public WideMap<String, User> getFollowers() {
-        return followers;
+    public void setFollowersCounter(Counter followersCounter) {
+        this.followersCounter = followersCounter;
     }
 
     public long getTweetsCount() {
@@ -203,4 +156,9 @@ public class User implements Serializable {
     public Counter getMentionsCounter() {
         return mentionsCounter;
     }
+
+    public void setMentionsCounter(Counter mentionsCounter) {
+        this.mentionsCounter = mentionsCounter;
+    }
+
 }
