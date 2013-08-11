@@ -17,13 +17,18 @@ public class UserKey {
 
     @Column
     @Order(2)
+    private Relationship relationship;
+
+    @Column
+    @Order(3)
     private String login;
 
     public UserKey() {
     }
 
-    public UserKey(String userLogin, String login) {
+    public UserKey(String userLogin, Relationship relationship, String login) {
         this.userLogin = userLogin;
+        this.relationship = relationship;
         this.login = login;
     }
 
@@ -35,6 +40,14 @@ public class UserKey {
         this.userLogin = userLogin;
     }
 
+    public Relationship getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(Relationship relationship) {
+        this.relationship = relationship;
+    }
+
     public String getLogin() {
         return login;
     }
@@ -43,4 +56,8 @@ public class UserKey {
         this.login = login;
     }
 
+    public static enum Relationship
+    {
+        FRIEND, FOLLOWER;
+    }
 }

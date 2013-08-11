@@ -14,26 +14,39 @@ public class TweetKey {
 
     @Column
     @Order(1)
-    private String login;
+    private String loginOrTag;
 
     @Column
     @Order(2)
+    private LineType type;
+
+    @Column
+    @Order(3)
     private UUID tweetId;
 
     public TweetKey() {
     }
 
-    public TweetKey(String login, UUID tweetId) {
-        this.login = login;
+    public TweetKey(String loginOrTag, LineType type, UUID tweetId) {
+        this.loginOrTag = loginOrTag;
+        this.type = type;
         this.tweetId = tweetId;
     }
 
-    public String getLogin() {
-        return login;
+    public String getLoginOrTag() {
+        return loginOrTag;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setLoginOrTag(String login) {
+        this.loginOrTag = login;
+    }
+
+    public LineType getType() {
+        return type;
+    }
+
+    public void setType(LineType type) {
+        this.type = type;
     }
 
     public UUID getTweetId() {
@@ -42,5 +55,10 @@ public class TweetKey {
 
     public void setTweetId(UUID tweetId) {
         this.tweetId = tweetId;
+    }
+
+    public static enum LineType
+    {
+        USERLINE, TIMELINE, FAVORITELINE, MENTIONLINE, TAGLINE;
     }
 }

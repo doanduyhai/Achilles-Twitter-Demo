@@ -1,11 +1,12 @@
 package info.archinnov.achilles.demo.twitter.service;
 
+import static info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType.FAVORITELINE;
 import info.archinnov.achilles.demo.twitter.entity.Tweet;
+import info.archinnov.achilles.demo.twitter.entity.TweetIndex;
+import info.archinnov.achilles.demo.twitter.entity.TweetLine;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetIndexKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
-import info.archinnov.achilles.demo.twitter.entity.index.TweetFavoriteLineIndex;
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.FavoriteLine;
-import info.archinnov.achilles.entity.manager.ThriftEntityManager;
+import info.archinnov.achilles.entity.manager.CQLEntityManager;
 import java.util.UUID;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,18 @@ public class FavoriteService {
     private TweetService tweetService;
 
     @Inject
-    private ThriftEntityManager em;
+    private CQLEntityManager em;
 
     public void addTweetToFavorite(String userLogin, String tweetId) {
 
         Tweet tweet = tweetService.fetchTweetIndex(tweetId);
         UUID id = UUID.fromString(tweetId);
 
-        FavoriteLine favoriteLine = em.find(FavoriteLine.class, new TweetKey(userLogin, id));
+        TweetLine favoriteLine = em.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
 
         if (favoriteLine == null) {
-            em.persist(new FavoriteLine(userLogin, tweet.getTweetModel()));
-            em.persist(new TweetFavoriteLineIndex(id, userLogin));
+            em.persist(new TweetLine(userLogin, FAVORITELINE, tweet.getTweetModel()));
+            em.persist(new TweetIndex(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().incr();
         }
     }
@@ -41,11 +42,11 @@ public class FavoriteService {
         Tweet tweet = tweetService.fetchTweetIndex(tweetId);
         UUID id = tweet.getId();
 
-        FavoriteLine favoriteLine = em.find(FavoriteLine.class, new TweetKey(userLogin, id));
+        TweetLine favoriteLine = em.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
 
         if (favoriteLine != null) {
             em.remove(favoriteLine);
-            em.removeById(TweetFavoriteLineIndex.class, new TweetIndexKey(id, userLogin));
+            em.removeById(TweetIndex.class, new TweetIndexKey(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().decr();
         }
     }

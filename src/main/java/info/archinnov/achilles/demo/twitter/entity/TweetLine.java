@@ -1,23 +1,36 @@
-package info.archinnov.achilles.demo.twitter.entity.line.tweet;
+package info.archinnov.achilles.demo.twitter.entity;
 
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
+import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- * AbstractLine
+ * TweetLine
  * 
  * @author DuyHai DOAN
  * 
  */
-public class AbstractTweetLine {
+@Entity
+@Table(name = "tweet_line")
+public class TweetLine {
 
     @EmbeddedId
     protected TweetKey id;
 
     @Column
     protected TweetModel tweetModel;
+
+    public TweetLine() {
+    }
+
+    public TweetLine(String login, LineType type, TweetModel tweetModel) {
+        this.id = new TweetKey(login, type, tweetModel.getId());
+        this.tweetModel = tweetModel;
+    }
 
     public TweetKey getId() {
         return id;

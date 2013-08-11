@@ -1,6 +1,7 @@
 package info.archinnov.achilles.demo.twitter.entity.compound;
 
 import info.archinnov.achilles.annotations.Order;
+import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import java.util.UUID;
 import javax.persistence.Column;
 
@@ -18,14 +19,19 @@ public class TweetIndexKey {
 
     @Column
     @Order(2)
-    private String login;
+    private LineType type;
+
+    @Column
+    @Order(3)
+    private String loginOrTag;
 
     public TweetIndexKey() {
     }
 
-    public TweetIndexKey(UUID tweetId, String login) {
+    public TweetIndexKey(UUID tweetId, LineType type, String loginOrTag) {
         this.tweetId = tweetId;
-        this.login = login;
+        this.type = type;
+        this.loginOrTag = loginOrTag;
     }
 
     public UUID getTweetId() {
@@ -36,12 +42,20 @@ public class TweetIndexKey {
         this.tweetId = tweetId;
     }
 
-    public String getLogin() {
-        return login;
+    public LineType getType() {
+        return type;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setType(LineType type) {
+        this.type = type;
+    }
+
+    public String getLoginOrTag() {
+        return loginOrTag;
+    }
+
+    public void setLoginOrTag(String loginOrTag) {
+        this.loginOrTag = loginOrTag;
     }
 
 }

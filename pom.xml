@@ -10,7 +10,7 @@
 	<properties>
 		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<achilles.version>2.0.2</achilles.version>
+		<achilles.version>2.0.3</achilles.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
 	</properties>
 
@@ -19,7 +19,7 @@
 
 	<dependency>
 		<groupId>info.archinnov</groupId>
-		<artifactId>achilles-thrift</artifactId>
+		<artifactId>achilles-cql</artifactId>
 		<version>${achilles.version}</version>
 	</dependency>
 	<dependency>

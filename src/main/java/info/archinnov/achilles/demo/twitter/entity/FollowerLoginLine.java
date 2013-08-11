@@ -1,7 +1,7 @@
-package info.archinnov.achilles.demo.twitter.entity.line.user;
+package info.archinnov.achilles.demo.twitter.entity;
 
-import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.demo.twitter.entity.compound.UserKey;
+import info.archinnov.achilles.demo.twitter.entity.compound.UserKey.Relationship;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -23,7 +23,7 @@ public class FollowerLoginLine {
     }
 
     public FollowerLoginLine(String userLogin, User follower) {
-        this.id = new UserKey(userLogin, follower.getLogin());
+        this.id = new UserKey(userLogin, Relationship.FOLLOWER, follower.getLogin());
     }
 
     public UserKey getId() {

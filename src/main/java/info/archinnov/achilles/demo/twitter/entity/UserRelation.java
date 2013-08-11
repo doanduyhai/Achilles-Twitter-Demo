@@ -1,18 +1,22 @@
-package info.archinnov.achilles.demo.twitter.entity.line.user;
+package info.archinnov.achilles.demo.twitter.entity;
 
-import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.demo.twitter.entity.compound.UserKey;
+import info.archinnov.achilles.demo.twitter.entity.compound.UserKey.Relationship;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 /**
- * AbstractUserLine
+ * UserRelation
  * 
  * @author DuyHai DOAN
  * 
  */
-public class AbstractUserLine {
+@Entity
+@Table(name = "user_relation")
+public class UserRelation {
 
     @EmbeddedId
     protected UserKey id;
@@ -20,6 +24,14 @@ public class AbstractUserLine {
     @JoinColumn
     @ManyToMany
     protected User user;
+
+    public UserRelation() {
+    }
+
+    public UserRelation(String userLogin, Relationship relationship, User relation) {
+        this.id = new UserKey(userLogin, relationship, relation.getLogin());
+        this.user = relation;
+    }
 
     public UserKey getId() {
         return id;

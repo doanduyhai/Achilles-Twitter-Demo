@@ -1,12 +1,11 @@
 package info.archinnov.achilles.demo.twitter.service;
 
+import static info.archinnov.achilles.demo.twitter.entity.compound.UserKey.Relationship.*;
+import info.archinnov.achilles.demo.twitter.entity.FollowerLoginLine;
 import info.archinnov.achilles.demo.twitter.entity.User;
+import info.archinnov.achilles.demo.twitter.entity.UserRelation;
 import info.archinnov.achilles.demo.twitter.entity.compound.UserKey;
-import info.archinnov.achilles.demo.twitter.entity.line.user.AbstractUserLine;
-import info.archinnov.achilles.demo.twitter.entity.line.user.FollowerLine;
-import info.archinnov.achilles.demo.twitter.entity.line.user.FollowerLoginLine;
-import info.archinnov.achilles.demo.twitter.entity.line.user.FriendLine;
-import info.archinnov.achilles.entity.manager.ThriftEntityManager;
+import info.archinnov.achilles.entity.manager.CQLEntityManager;
 import info.archinnov.achilles.type.OrderingMode;
 import java.util.List;
 import javax.inject.Inject;
@@ -25,14 +24,14 @@ public class UserService
 {
 
     @Inject
-    private ThriftEntityManager em;
+    private CQLEntityManager em;
 
-    private Function<AbstractUserLine, User> userLineToUser = new Function<AbstractUserLine, User>() {
+    private Function<UserRelation, User> userLineToUser = new Function<UserRelation, User>() {
 
         @Override
-        public User apply(AbstractUserLine userLine)
+        public User apply(UserRelation userRelation)
         {
-            return userLine.getUser();
+            return userRelation.getUser();
         }
     };
 
@@ -55,14 +54,15 @@ public class UserService
         User user = loadUser(userLogin);
         User friend = loadUser(friendLogin);
 
-        FriendLine foundFriend = em.find(FriendLine.class, new UserKey(userLogin, friendLogin));
+        UserRelation foundFriend = em.find(UserRelation.class, new UserKey(userLogin, FRIEND,
+                friendLogin));
 
         if (foundFriend == null)
         {
-            em.persist(new FriendLine(userLogin, friend));
+            em.persist(new UserRelation(userLogin, FRIEND, friend));
             user.getFriendsCounter().incr();
 
-            em.persist(new FollowerLine(friendLogin, user));
+            em.persist(new UserRelation(friendLogin, FOLLOWER, user));
             em.persist(new FollowerLoginLine(friendLogin, user));
             friend.getFollowersCounter().incr();
 
@@ -81,15 +81,15 @@ public class UserService
         User user = loadUser(userLogin);
         User friend = loadUser(friendLogin);
 
-        FriendLine foundFriend = em.find(FriendLine.class, new UserKey(userLogin, friendLogin));
+        UserRelation foundFriend = em.find(UserRelation.class, new UserKey(userLogin, FRIEND, friendLogin));
 
         if (foundFriend != null)
         {
             em.remove(foundFriend);
             user.getFriendsCounter().decr();
 
-            em.removeById(FollowerLine.class, new UserKey(friendLogin, userLogin));
-            em.removeById(FollowerLoginLine.class, new UserKey(friendLogin, userLogin));
+            em.removeById(UserRelation.class, new UserKey(friendLogin, FOLLOWER, userLogin));
+            em.removeById(FollowerLoginLine.class, new UserKey(friendLogin, FOLLOWER, userLogin));
             friend.getFollowersCounter().decr();
 
             initCountersForSerialization(friend);
@@ -105,8 +105,10 @@ public class UserService
 
     public List<User> getFriends(String userLogin, int length)
     {
-        List<FriendLine> friendLines = em.sliceQuery(FriendLine.class)
+        List<UserRelation> friendLines = em.sliceQuery(UserRelation.class)
                 .partitionKey(userLogin)
+                .fromClusterings(FRIEND)
+                .toClusterings(FRIEND)
                 .ordering(OrderingMode.ASCENDING)
                 .get(length);
 
@@ -121,8 +123,10 @@ public class UserService
 
     public List<User> getFollowers(String userLogin, int length)
     {
-        List<FollowerLine> followerLines = em.sliceQuery(FollowerLine.class)
+        List<UserRelation> followerLines = em.sliceQuery(UserRelation.class)
                 .partitionKey(userLogin)
+                .fromClusterings(FOLLOWER)
+                .toClusterings(FOLLOWER)
                 .ordering(OrderingMode.ASCENDING)
                 .get(length);
 
@@ -158,10 +162,14 @@ public class UserService
 
     private void initCountersForSerialization(User user)
     {
-        user.setTweetsCount(user.getTweetsCounter().get());
-        user.setFriendsCount(user.getFriendsCounter().get());
-        user.setFollowersCount(user.getFollowersCounter().get());
-        user.setMentionsCount(user.getMentionsCounter().get());
+        Long tweetsCount = user.getTweetsCounter().get();
+        user.setTweetsCount(tweetsCount == null ? 0 : tweetsCount);
+        Long friendsCount = user.getFriendsCounter().get();
+        user.setFriendsCount(friendsCount == null ? 0 : friendsCount);
+        Long followersCount = user.getFollowersCounter().get();
+        user.setFollowersCount(followersCount == null ? 0 : followersCount);
+        Long mentionsCount = user.getMentionsCounter().get();
+        user.setMentionsCount(mentionsCount == null ? 0 : mentionsCount);
     }
 
     private void initCountersForSerialization(List<User> users)

@@ -40,11 +40,10 @@
 		<property name="messageConverters" ref="defaultMessageConverters"/>
 	</bean>
 	
-	<bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.integration.spring.ThriftEntityManagerFactoryBean"
-		init-method="initialize">
+	<bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.integration.spring.CQLEntityManagerFactoryBean">
 		<property name="entityPackages" value="info.archinnov.achilles.demo.twitter.entity"/>
-		<property name="cassandraHost" value="localhost:9160"/>
-		<property name="clusterName" value="Test Cluster"/>
+		<property name="contactPoints" value="localhost"/>
+		<property name="port" value="9042"/>
 		<property name="keyspaceName" value="achilles"/>
 		<property name="objectMapper" ref="objectMapperFactoryBean"/>
 		<property name="consistencyLevelReadDefault" value="ONE"/>

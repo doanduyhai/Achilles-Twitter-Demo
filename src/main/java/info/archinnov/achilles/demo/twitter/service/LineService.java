@@ -1,13 +1,10 @@
 package info.archinnov.achilles.demo.twitter.service;
 
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.AbstractTweetLine;
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.FavoriteLine;
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.MentionLine;
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.TagLine;
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.TimeLine;
-import info.archinnov.achilles.demo.twitter.entity.line.tweet.UserLine;
+import static info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType.*;
+import info.archinnov.achilles.demo.twitter.entity.TweetLine;
+import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
-import info.archinnov.achilles.entity.manager.ThriftEntityManager;
+import info.archinnov.achilles.entity.manager.CQLEntityManager;
 import info.archinnov.achilles.type.OrderingMode;
 import java.util.List;
 import javax.inject.Inject;
@@ -23,21 +20,12 @@ public class LineService
     private UserService userService;
 
     @Inject
-    private ThriftEntityManager em;
+    private CQLEntityManager em;
 
-    private Function<AbstractTweetLine, TweetModel> lineToTweet = new Function<AbstractTweetLine, TweetModel>() {
-
-        @Override
-        public TweetModel apply(AbstractTweetLine line)
-        {
-            return line.getTweetModel();
-        }
-    };
-
-    private Function<TagLine, TweetModel> tagLineToTweet = new Function<TagLine, TweetModel>() {
+    private Function<TweetLine, TweetModel> lineToTweet = new Function<TweetLine, TweetModel>() {
 
         @Override
-        public TweetModel apply(TagLine line)
+        public TweetModel apply(TweetLine line)
         {
             return line.getTweetModel();
         }
@@ -45,7 +33,7 @@ public class LineService
 
     public List<TweetModel> getTimeline(String userLogin, int length)
     {
-        List<TimeLine> timeline = fetchData(TimeLine.class, userLogin, length);
+        List<TweetLine> timeline = fetchData(userLogin, TIMELINE, length);
 
         return FluentIterable
                 .from(timeline)
@@ -55,7 +43,7 @@ public class LineService
 
     public List<TweetModel> getUserline(String userLogin, int length)
     {
-        List<UserLine> userline = fetchData(UserLine.class, userLogin, length);
+        List<TweetLine> userline = fetchData(userLogin, USERLINE, length);
 
         return FluentIterable
                 .from(userline)
@@ -65,7 +53,7 @@ public class LineService
 
     public List<TweetModel> getFavoriteLine(String userLogin, int length)
     {
-        List<FavoriteLine> favoriteline = fetchData(FavoriteLine.class, userLogin, length);
+        List<TweetLine> favoriteline = fetchData(userLogin, FAVORITELINE, length);
 
         return FluentIterable
                 .from(favoriteline)
@@ -75,7 +63,7 @@ public class LineService
 
     public List<TweetModel> getMentionLine(String userLogin, int length)
     {
-        List<MentionLine> mentionline = fetchData(MentionLine.class, userLogin, length);
+        List<TweetLine> mentionline = fetchData(userLogin, MENTIONLINE, length);
 
         return FluentIterable
                 .from(mentionline)
@@ -85,20 +73,22 @@ public class LineService
 
     public List<TweetModel> getTagLine(String tag, int length)
     {
-        List<TagLine> tagline = fetchData(TagLine.class, tag, length);
+        List<TweetLine> tagline = fetchData(tag, TAGLINE, length);
 
         return FluentIterable
                 .from(tagline)
-                .transform(tagLineToTweet)
+                .transform(lineToTweet)
                 .toImmutableList();
 
     }
 
-    private <T> List<T> fetchData(Class<T> lineClass, String partitionKey, int length) {
-        List<T> timeline = em.sliceQuery(lineClass)
+    private List<TweetLine> fetchData(String partitionKey, LineType type, int length) {
+        List<TweetLine> line = em.sliceQuery(TweetLine.class)
                 .partitionKey(partitionKey)
+                .fromClusterings(type)
+                .toClusterings(type)
                 .ordering(OrderingMode.DESCENDING)
                 .get(length);
-        return timeline;
+        return line;
     }
 }
