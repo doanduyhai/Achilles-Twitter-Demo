@@ -80,7 +80,7 @@ public class TweetService
         Tweet tweet = em.find(Tweet.class, UUID.fromString(tweetId));
         if (tweet != null)
         {
-            tweetModel = tweet.getTweet();
+            tweetModel = tweet.getTweetModel();
             tweetModel.setFavoritesCount(tweet.getFavoritesCount().get());
         }
         return tweetModel;
@@ -102,7 +102,7 @@ public class TweetService
 
         Tweet tweet = fetchTweetIndex(tweetId);
 
-        TweetModel tweetModel = tweet.getTweet();
+        TweetModel tweetModel = tweet.getTweetModel();
         UUID id = tweetModel.getId();
 
         User user = em.find(User.class, tweetModel.getAuthor());

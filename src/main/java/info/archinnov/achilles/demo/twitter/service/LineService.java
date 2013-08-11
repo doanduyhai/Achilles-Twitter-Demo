@@ -30,7 +30,7 @@ public class LineService
         @Override
         public TweetModel apply(AbstractTweetLine line)
         {
-            return line.getTweet();
+            return line.getTweetModel();
         }
     };
 
@@ -39,7 +39,7 @@ public class LineService
         @Override
         public TweetModel apply(TagLine line)
         {
-            return line.getTweet();
+            return line.getTweetModel();
         }
     };
 

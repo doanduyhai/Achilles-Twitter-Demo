@@ -30,7 +30,7 @@ public class FavoriteService {
         FavoriteLine favoriteLine = em.find(FavoriteLine.class, new TweetKey(userLogin, id));
 
         if (favoriteLine == null) {
-            em.persist(new FavoriteLine(userLogin, tweet.getTweet()));
+            em.persist(new FavoriteLine(userLogin, tweet.getTweetModel()));
             em.persist(new TweetFavoriteLineIndex(id, userLogin));
             tweet.getFavoritesCount().incr();
         }

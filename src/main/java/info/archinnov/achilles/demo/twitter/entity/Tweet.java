@@ -43,11 +43,11 @@ public class Tweet {
         this.id = id;
     }
 
-    public TweetModel getTweet() {
+    public TweetModel getTweetModel() {
         return tweetModel;
     }
 
-    public void setTweet(TweetModel tweetModel) {
+    public void setTweetModel(TweetModel tweetModel) {
         this.tweetModel = tweetModel;
     }
 
