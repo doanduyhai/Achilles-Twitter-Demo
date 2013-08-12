@@ -6,7 +6,7 @@ import info.archinnov.achilles.demo.twitter.json.JsonDateSerializer;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
-import me.prettyprint.cassandra.utils.TimeUUIDUtils;
+import org.apache.cassandra.utils.UUIDGen;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -38,7 +38,8 @@ public class TweetModel implements Serializable {
     public TweetModel(UUID id, User creator, String content) {
         this.id = id;
         if (id != null) {
-            this.creationDate = new Date(TimeUUIDUtils.getTimeFromUUID(id));
+
+            this.creationDate = new Date(UUIDGen.unixTimestamp(id));
         }
         this.content = content;
         if (creator != null) {

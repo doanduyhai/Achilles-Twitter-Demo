@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
-import me.prettyprint.cassandra.utils.TimeUUIDUtils;
+import org.apache.cassandra.utils.UUIDGen;
 import org.springframework.stereotype.Service;
 
 /**
@@ -47,7 +47,7 @@ public class TweetService
                     + "' does no exist");
         }
 
-        UUID uuid = TimeUUIDUtils.getUniqueTimeUUIDinMillis();
+        UUID uuid = UUIDGen.getTimeUUID();
 
         TweetModel tweetModel = new TweetModel(uuid, author, content);
 
