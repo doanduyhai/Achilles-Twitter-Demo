@@ -6,8 +6,11 @@ This application is a Twitter clone back-end and offers a restful API. You need 
 
 1. **[Back-end API]**
 2. **[Entity Modeling]**
-    1. **[User]**
-    2. **[Tweet Index]**
+    1. **[Modeling Users]**
+    2. **[Modeling Tweets]**
+    3. **[Modeling User Relationships]**
+    4. **[Modeling Tweet Lines]**
+    5. **[Modeling Tweet Reverse Indexes]**
 3. **[Functional Features]**
     1. **[Posting a tweet]**
     2. **[Spreading tags and mentions]**
@@ -24,15 +27,17 @@ This application is a Twitter clone back-end and offers a restful API. You need 
 
 
 [Twitter Demo]: https://github.com/doanduyhai/Achilles-Twitter-Demo/
-[WideMap API]: https://github.com/doanduyhai/Achilles/wiki/WideMap-API
-[WideRow]: https://github.com/doanduyhai/Achilles/wiki/WideRow
+[Clustered Entity]: https://github.com/doanduyhai/Achilles/wiki/Entity-Mapping#clustered-entity
+[Value-less Entity]: https://github.com/doanduyhai/Achilles/wiki/Entity-Mapping#value-less-entity
 [Counters]: https://github.com/doanduyhai/Achilles/wiki/Counters
 [Postman REST Client]: https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm
 [Back-end API]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-API
 [Entity Modeling]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling
-[User]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#user
-[Tweet Index]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#tweet-index
-[Wide Row]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#widerows
+[Modeling Users]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#modeling-users
+[Modeling Tweets]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#modeling-tweets
+[Modeling User Relationships]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#modeling-user-relationships
+[Modeling Tweet Lines]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#modeling-tweet-lines
+[Modeling Tweet Reverse Indexes]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#modeling-tweet-reverse-indexes
 [Functional Features]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Features
 [Posting a tweet]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Features#posting-a-tweet
 [Spreading tags and mentions]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Features#spreading-tags-and-mentions
