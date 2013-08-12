@@ -1,6 +1,6 @@
 For an example of an advanced usage of **Achilles**, you can check out the **[Twitter Demo]** application.
 
- Before reading this advanced demo, you should first read the chapters on **[WideMap API]**, **[WideRow]** and **[Counters]**.
+Before reading this advanced demo, you should first read the chapters on **[Clustered Entity]**, **[Value-less Entity]** and **[Counters]**.
 
 This application is a Twitter clone back-end and offers a restful API. You need to have a client to interact with the API.As an example, scripts for Chrome **[Postman REST Client]** are provided (in the **Postman_Client_Scripts** folder) but of course you can use any client of your own.
 
