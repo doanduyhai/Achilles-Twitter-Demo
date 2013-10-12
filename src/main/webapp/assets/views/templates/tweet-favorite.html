@@ -1,0 +1,18 @@
+<div>
+	<h3>{{user.firstname}} {{user.lastname}} adds tweet {{tweetName}} to favorite</h3>
+	<div class="form-horizontal">	
+		<span class="badge badge-info">PUT</span>
+		&nbsp;&nbsp;
+		<span><strong>/tweet/favorite?userLogin={{login}}&tweetId=</strong></span>
+		<input type="text" class="input-xlarge" ng-model="tweetId"/>
+	</div>
+	<br/>		
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="addToFavorite(tweetId)">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+</div>

@@ -1,0 +1,21 @@
+<div>
+	<h3>Display tag line for tag '{{tag}}'</h3>
+	
+	<div class="form-horizontal">	
+		<span class="badge badge-success">GET</span>
+		&nbsp;&nbsp;
+		<span><strong>/tagline?tag={{tag}}</strong></span>		
+	</div>
+	<br />
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="listTweetsForTag()">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#tweet-line'"/>
+	</div>
+</div>

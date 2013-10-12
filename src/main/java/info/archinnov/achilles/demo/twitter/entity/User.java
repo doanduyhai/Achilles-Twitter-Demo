@@ -1,13 +1,14 @@
 package info.archinnov.achilles.demo.twitter.entity;
 
+import info.archinnov.achilles.annotations.Column;
+import info.archinnov.achilles.annotations.Entity;
+import info.archinnov.achilles.annotations.Id;
 import info.archinnov.achilles.demo.twitter.json.JsonDateDeserializer;
 import info.archinnov.achilles.demo.twitter.json.JsonDateSerializer;
 import info.archinnov.achilles.type.Counter;
+
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -17,148 +18,107 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * @author DuyHai DOAN
  * 
  */
-@Entity
-@Table(name = "user")
+@Entity(table = "user")
 public class User {
 
-    @Id
-    private String login;
+	@Id
+	private String login;
 
-    @Column
-    private String firstname;
+	@Column
+	private String firstname;
 
-    @Column
-    private String lastname;
+	@Column
+	private String lastname;
 
-    @JsonDeserialize(using = JsonDateDeserializer.class)
-    @JsonSerialize(using = JsonDateSerializer.class)
-    @Column
-    private Date accountCreationDate;
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@Column
+	private Date accountCreationDate;
 
-    @Column
-    private Counter tweetsCounter;
+	@Column
+	private Counter tweetsCounter;
 
-    private long tweetsCount;
+	@Column
+	private Counter friendsCounter;
 
-    @Column
-    private Counter friendsCounter;
+	@Column
+	private Counter followersCounter;
 
-    private long friendsCount;
+	@Column
+	private Counter mentionsCounter;
 
-    @Column
-    private Counter followersCounter;
+	public User() {
+	}
 
-    private long followersCount;
+	public User(String login, String firstname, String lastname) {
+		this.login = login;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.accountCreationDate = new Date();
+	}
 
-    @Column
-    private Counter mentionsCounter;
+	public String getLogin() {
+		return login;
+	}
 
-    private long mentionsCount;
+	public void setLogin(String login) {
+		this.login = login;
+	}
 
-    public User() {
-    }
+	public String getFirstname() {
+		return firstname;
+	}
 
-    public User(String login, String firstname, String lastname) {
-        this.login = login;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.accountCreationDate = new Date();
-    }
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
 
-    public String getLogin() {
-        return login;
-    }
+	public String getLastname() {
+		return lastname;
+	}
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
 
-    public String getFirstname() {
-        return firstname;
-    }
+	public Date getAccountCreationDate() {
+		return accountCreationDate;
+	}
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
+	public void setAccountCreationDate(Date accountCreationDate) {
+		this.accountCreationDate = accountCreationDate;
+	}
 
-    public String getLastname() {
-        return lastname;
-    }
+	public Counter getTweetsCounter() {
+		return tweetsCounter;
+	}
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
+	public void setTweetsCounter(Counter tweetsCounter) {
+		this.tweetsCounter = tweetsCounter;
+	}
 
-    public Date getAccountCreationDate() {
-        return accountCreationDate;
-    }
+	public Counter getFriendsCounter() {
+		return friendsCounter;
+	}
 
-    public void setAccountCreationDate(Date accountCreationDate) {
-        this.accountCreationDate = accountCreationDate;
-    }
+	public void setFriendsCounter(Counter friendsCounter) {
+		this.friendsCounter = friendsCounter;
+	}
 
-    public Counter getTweetsCounter() {
-        return tweetsCounter;
-    }
+	public Counter getFollowersCounter() {
+		return followersCounter;
+	}
 
-    public void setTweetsCounter(Counter tweetsCounter) {
-        this.tweetsCounter = tweetsCounter;
-    }
+	public void setFollowersCounter(Counter followersCounter) {
+		this.followersCounter = followersCounter;
+	}
 
-    public Counter getFriendsCounter() {
-        return friendsCounter;
-    }
+	public Counter getMentionsCounter() {
+		return mentionsCounter;
+	}
 
-    public void setFriendsCounter(Counter friendsCounter) {
-        this.friendsCounter = friendsCounter;
-    }
-
-    public Counter getFollowersCounter() {
-        return followersCounter;
-    }
-
-    public void setFollowersCounter(Counter followersCounter) {
-        this.followersCounter = followersCounter;
-    }
-
-    public long getTweetsCount() {
-        return tweetsCount;
-    }
-
-    public void setTweetsCount(long tweetsCount) {
-        this.tweetsCount = tweetsCount;
-    }
-
-    public long getFriendsCount() {
-        return friendsCount;
-    }
-
-    public void setFriendsCount(long friendsCount) {
-        this.friendsCount = friendsCount;
-    }
-
-    public long getFollowersCount() {
-        return followersCount;
-    }
-
-    public void setFollowersCount(long followersCount) {
-        this.followersCount = followersCount;
-    }
-
-    public long getMentionsCount() {
-        return mentionsCount;
-    }
-
-    public void setMentionsCount(long mentionsCount) {
-        this.mentionsCount = mentionsCount;
-    }
-
-    public Counter getMentionsCounter() {
-        return mentionsCounter;
-    }
-
-    public void setMentionsCounter(Counter mentionsCounter) {
-        this.mentionsCounter = mentionsCounter;
-    }
+	public void setMentionsCounter(Counter mentionsCounter) {
+		this.mentionsCounter = mentionsCounter;
+	}
 
 }

@@ -1,0 +1,21 @@
+<div>
+	<h3>Delete tweet {{tweetName}}</h3>
+	<div class="form-horizontal">	
+		<span class="badge badge-important">DELETE</span>
+		&nbsp;&nbsp;
+		<span><strong>/tweet?tweetId=</strong></span>
+		<input type="text" class="input-xlarge" ng-model="tweetId"/>
+	</div>
+	<br/>
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="removeTweet(tweetId)">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#tweet-details-light'"/>
+	</div>
+</div>

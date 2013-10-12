@@ -1,0 +1,123 @@
+<div id="server-reply">
+	<h5>
+		Reply from server:&nbsp; <span class="badge badge-success"
+			ng-if="success">{{httpResponse.code}}</span> <span
+			class="badge badge-important" ng-if="error">{{httpResponse.code}}</span>
+	</h5>
+	<div class="alert alert-error" ng-if="error">{{httpResponse.data}}</div>
+</div>
+<div id="user-details">
+	<table class="table table-striped table-bordered" ng-if="success">
+		<thead>
+			<tr>
+				<th>Login</th>
+				<th>Name</th>
+				<th>Creation Date</th>
+				<th>Tweets count</th>
+				<th>Friends count</th>
+				<th>Followers count</th>
+				<th>Mentions count</th>
+			<tr>	
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{httpResponse.data.login}}</td>
+				<td>{{httpResponse.data.firstname}} {{httpResponse.data.lastname}}</td>
+				<td>{{httpResponse.data.accountCreationDate}}</td>
+				<td>{{httpResponse.data.tweetsCounter}}</td>
+				<td>{{httpResponse.data.friendsCounter}}</td>
+				<td>{{httpResponse.data.followersCounter}}</td>
+				<td>{{httpResponse.data.mentionsCounter}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div id="user-relations">
+	<table class="table table-striped table-bordered" ng-if="success">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Login</th>
+				<th>Name</th>
+				<th>Creation Date</th>
+			<tr>	
+		</thead>
+		<tbody>
+			<tr ng-repeat="person in httpResponse.data">
+				<td>{{$index}}</td>
+				<td>{{person.login}}</td>
+				<td>{{person.firstname}} {{person.lastname}}</td>
+				<td>{{person.accountCreationDate}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div id="tweet-id">
+	<span ng-if="success">{{httpResponse.data}}</span>
+</div>
+<div id="tweet-details">
+	<table class="table table-striped table-bordered" ng-if="success">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Author</th>
+				<th>Content</th>
+				<th>Creation date</th>
+				<th>Favorite count</th>
+			<tr>	
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{httpResponse.data.id}}</td>
+				<td>{{httpResponse.data.author}}</td>
+				<td>{{httpResponse.data.content}}</td>
+				<td>{{httpResponse.data.creationDate}}</td>
+				<td>{{httpResponse.data.favoritesCount}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div id="tweet-details-light">
+	<table class="table table-striped table-bordered" ng-if="success">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Author</th>
+				<th>Content</th>
+				<th>Creation date</th>
+			<tr>	
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{httpResponse.data.id}}</td>
+				<td>{{httpResponse.data.author}}</td>
+				<td>{{httpResponse.data.content}}</td>
+				<td>{{httpResponse.data.creationDate}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div id="tweet-line">
+	<table class="table table-striped table-bordered" ng-if="success">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Id</th>
+				<th>Author</th>
+				<th>Content</th>
+				<th>Creation date</th>
+				<th>Favorite count</th>
+			<tr>	
+		</thead>
+		<tbody>
+			<tr ng-repeat="tweet in httpResponse.data">
+				<td>{{$index}}</td>
+				<td>{{tweet.id}}</td>
+				<td>{{tweet.author}}</td>
+				<td>{{tweet.content}}</td>
+				<td>{{tweet.creationDate}}</td>
+				<td>{{tweet.favoritesCount}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>	

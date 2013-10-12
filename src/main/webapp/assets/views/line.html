@@ -1,0 +1,8 @@
+<div class="row" ng-controller="LineCtrl">
+    <section class="offset1" ng-if="type==='userline' || type==='timeline' || type==='favoriteline' || type==='mentionline'">
+    	<ui-include src="'assets/views/templates/lines.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="type==='tagline'">
+    	<ui-include src="'assets/views/templates/tagline.html'"></ui-include>
+    </section>
+</div>

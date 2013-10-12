@@ -1,0 +1,23 @@
+<div>
+	<h3 ng-show="action==='list-friends'">List all friends of {{user.firstname}} {{user.lastname}}</h3>
+	<h3 ng-show="action==='list-followers'">List all followers of {{user.firstname}} {{user.lastname}}</h3>
+	
+	<div class="form-horizontal">	
+		<span class="badge badge-success">GET</span>
+		&nbsp;&nbsp;
+		<span ng-show="action==='list-friends'"><strong>/user/friends?userLogin={{login}}</strong></span>		
+		<span ng-show="action==='list-followers'"><strong>/user/followers?userLogin={{login}}</strong></span>		
+	</div>
+	<br />
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="listRelations()">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#user-relations'"/>
+	</div>
+</div>

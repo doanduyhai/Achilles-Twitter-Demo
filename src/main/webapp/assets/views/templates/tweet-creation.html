@@ -1,0 +1,23 @@
+<div>
+	<h3>{{user.firstname}} {{user.lastname}} creates {{tweetName}}</h3>
+	<div class="form-horizontal">	
+		<span class="badge badge-warning">POST</span>
+		&nbsp;&nbsp;
+		<span><strong>/tweet?authorLogin={{login}}</strong></span>
+	</div>
+	<br/>		
+	<span><em>{{tweetContent}}</em></span>
+	<br/>
+	<br/>
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="createTweet()">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#tweet-id'"/>
+	</div>
+</div>

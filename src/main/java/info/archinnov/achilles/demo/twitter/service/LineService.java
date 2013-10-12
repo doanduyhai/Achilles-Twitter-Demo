@@ -4,7 +4,7 @@ import static info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.Line
 import info.archinnov.achilles.demo.twitter.entity.TweetLine;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
-import info.archinnov.achilles.entity.manager.CQLEntityManager;
+import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
 import info.archinnov.achilles.type.OrderingMode;
 import java.util.List;
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ public class LineService
     private UserService userService;
 
     @Inject
-    private CQLEntityManager em;
+    private CQLPersistenceManager manager;
 
     private Function<TweetLine, TweetModel> lineToTweet = new Function<TweetLine, TweetModel>() {
 
@@ -83,7 +83,7 @@ public class LineService
     }
 
     private List<TweetLine> fetchData(String partitionKey, LineType type, int length) {
-        List<TweetLine> line = em.sliceQuery(TweetLine.class)
+        List<TweetLine> line = manager.sliceQuery(TweetLine.class)
                 .partitionKey(partitionKey)
                 .fromClusterings(type)
                 .toClusterings(type)

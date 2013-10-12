@@ -14,15 +14,13 @@ import org.springframework.beans.factory.FactoryBean;
  * @author DuyHai DOAN
  * 
  */
-public class ObjectMapperFactoryBean implements FactoryBean<ObjectMapper>
-{
+public class ObjectMapperFactoryBean implements FactoryBean<ObjectMapper> {
 	private ObjectMapper objectMapper = null;
 
 	public ObjectMapperFactoryBean() {
 		this.objectMapper = new ObjectMapper();
 		this.objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-		this.objectMapper
-				.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		AnnotationIntrospector primary = new JacksonAnnotationIntrospector();
 		AnnotationIntrospector secondary = new JaxbAnnotationIntrospector();
@@ -32,20 +30,17 @@ public class ObjectMapperFactoryBean implements FactoryBean<ObjectMapper>
 	}
 
 	@Override
-	public ObjectMapper getObject() throws Exception
-	{
+	public ObjectMapper getObject() throws Exception {
 		return objectMapper;
 	}
 
 	@Override
-	public Class<?> getObjectType()
-	{
+	public Class<?> getObjectType() {
 		return ObjectMapper.class;
 	}
 
 	@Override
-	public boolean isSingleton()
-	{
+	public boolean isSingleton() {
 		return true;
 	}
 

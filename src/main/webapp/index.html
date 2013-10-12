@@ -1,0 +1,214 @@
+<!doctype html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title></title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="assets/images/favicon.ico" />
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/font-awesome.css">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body ng-app="twitterDemoApp">
+	<!--[if lt IE 9]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser
+    today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better
+    experience this site.</p>
+<![endif]-->
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" ng-controller="DatabaseCtrl">
+			<div class="container-fluid">
+				<a class="brand" href="#/">Achilles Twitter Demo Client</a>
+                <button type="button" class="btn btn-small btn-primary pull-right" ng-click="resetDb()">
+                    Reset Database
+                </button>
+			</div>
+            <div class="alert alert-success" ng-if="success">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{successMessage}}
+            </div>
+            <div class="alert alert-error" ng-if="error">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{errorMessage}}
+            </div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span3">
+				<div class="well sidebar-nav" ng-controller="ScenarioCtrl">
+					<ul class="nav nav-list">
+						<li>
+							<a href="" ng-click="scenario1 = !scenario1">Scenario 1</a>
+							<div collapse="scenario1">
+								<ol>
+			                        <li><strong><a href="#/user/create/jdoe">Create user John DOE</a></strong></li>
+			                        <li><strong><a href="#/user/create/hsue">Create user Helen SUE</a></strong></li>
+			                        <li><strong><a href="#/user/create/rsmith">Create user Richard SMITH</a></strong></li>                        
+			                        <li><strong><a href="#/user/follows/hsue/jdoe">Helen follows John</a></strong></li>                        
+			                        <li><strong><a href="#/user/follows/rsmith/jdoe">Richard follows John</a></strong></li>                        
+			                        <li><a href="#/user/get-details/jdoe">Display John details</a></li>                        
+			                        <li><a href="#/user/list-followers/jdoe">List John followers</a></li>                        
+								</ol>
+							</div>
+						</li>
+						<li>
+							<a ng-click="scenario2 = !scenario2">Scenario 2</a>
+							<div collapse="scenario2">
+								<ol>
+			                        <li><strong><a href="#/tweet/create/jdoe/Tweet1">John posts Tweet1</a></strong></li>
+			                        <li><strong><a href="#/tweet/create/jdoe/Tweet2">John posts Tweet2</a></strong></li>
+			                        <li><strong><a href="#/tweet/create/jdoe/Tweet3">John posts Tweet3</a></strong></li>
+			                        <li><strong><a href="#/tweet/create/jdoe/Tweet4">John posts Tweet4</a></strong></li>
+			                        <li><a href="#/user/get-details/jdoe">Display John details</a></li>
+			                        <li><a href="#/line/userline/jdoe">Display John userline</a></li>
+			                        <li><a href="#/line/timeline/jdoe">Display John timeline</a></li>
+			                        <li><a href="#/line/timeline/hsue">Display Helen timeline</a></li>
+			                        <li><a href="#/line/timeline/rsmith">Display Richard timeline</a></li>
+			                        <li><a href="#/line/tagline/Achilles">Display #Achilles tagline</a></li>
+			                        <li><a href="#/line/tagline/Cassandra">Display #Cassandra tagline</a></li>
+			                        <li><a href="#/line/tagline/Java">Display #Java tagline</a></li>                        
+								</ol>
+							</div>
+						</li>
+						<li>
+							<a ng-click="scenario3 = !scenario3">Scenario 3</a>
+							<div collapse="scenario3">
+								<ol>
+			                        <li><strong><a href="#/user/follows/rsmith/hsue">Richard follows Helen</a></strong></li> 
+			                        <li><a href="#/user/list-followers/hsue">List Helen followers</a></li>                        
+			                        <li><a href="#/user/list-friends/rsmith">List Richard friends</a></li>                        
+			                        <li><strong><a href="#/tweet/create/hsue/Tweet5">Helen posts Tweet5</a></strong></li>
+			                        <li><a href="#/user/get-details/hsue">Display Helen details</a></li>
+			                        <li><a href="#/line/timeline/rsmith">Display Richard timeline</a></li>
+			                        <li><a href="#/line/tagline/Achilles">Display #Achilles tagline</a></li>
+			                        <li><a href="#/line/tagline/Cassandra">Display #Cassandra tagline</a></li>
+			                        <li><a href="#/line/tagline/ORM">Display #ORM tagline</a></li>                        
+			                        <li><a href="#/line/tagline/SQL">Display #SQL tagline</a></li>
+								</ol>
+							</div>
+						</li>
+						<li>
+							<a ng-click="scenario4 = !scenario4">Scenario 4</a>
+							<div collapse="scenario4">
+								<ol>
+			                        <li><strong><a href="#/user/unfollows/rsmith/hsue">Richard stops following Helen</a></strong></li>
+									<li><a href="#/user/list-followers/hsue">List Helen followers</a></li>                        
+			                        <li><a href="#/user/list-friends/rsmith">List Richard friends</a></li>
+			                        <li><strong><a href="#/tweet/create/hsue/Tweet6">Helen posts Tweet6</a></strong></li>
+			                        <li><a href="#/user/get-details/hsue">Display Helen details</a></li>
+			                        <li><a href="#/line/timeline/rsmith">Display Richard timeline</a></li>
+								</ol>
+							</div>
+						</li>
+						<li>
+							<a ng-click="scenario5 = !scenario5">Scenario 5</a>
+							<div collapse="scenario5">
+								<ol>
+			                        <li><a href="#/line/timeline/jdoe">Display John timeline</a></li>
+			                        <li><strong><a href="#/tweet/favorites/hsue/Tweet2">Helen favorites Tweet2</a></strong></li>
+			                        <li><strong><a href="#/tweet/favorites/hsue/Tweet3">Helen favorites Tweet3</a></strong></li>
+			                        <li><a href="#/line/favoriteline/hsue">Display Helen favorite line</a></li>
+			                        <li><a href="#/line/favoriteline/rsmith">Display Richard favorite line</a></li>
+									<li><a href="#/tweet/get-details/Tweet2">Display Tweet2 details</a></li>                        
+									<li><a href="#/tweet/get-details/Tweet3">Display Tweet3 details</a></li>
+								</ol>
+							</div>
+						</li>																		
+						<li>
+							<a ng-click="scenario6 = !scenario6">Scenario 6</a>
+							<div collapse="scenario6">
+								<ol>
+									<li><strong><a href="#/tweet/create/jdoe/Tweet7">John posts Tweet7 mentioning Helen & Richard</a></strong></li>								
+			                        <li><a href="#/line/mentionline/hsue">Display Helen mention line</a></li>
+			                        <li><a href="#/line/mentionline/rsmith">Display Richard mention line</a></li>
+									<li><a href="#/user/get-details/hsue">Display Helen details</a></li>                       
+									<li><a href="#/user/get-details/rsmith">Display Richard details</a></li>
+								</ol>
+							</div>
+						</li>																		
+						<li>
+							<a ng-click="scenario7 = !scenario7">Scenario 7</a>
+							<div collapse="scenario7">
+								<ol>
+			                        <li><a href="#/line/timeline/jdoe">Display John timeline</a></li>
+									<li><strong><a href="#/tweet/remove/Tweet1">John removes Tweet1</a></strong></li>								
+ 									<li><a href="#/line/timeline/hsue">Display Helen timeline</a></li>
+			                        <li><a href="#/line/timeline/rsmith">Display Richard timeline</a></li>
+			                        <li><a href="#/line/tagline/Achilles">Display #Achilles tagline</a></li>
+			                        <li><a href="#/line/tagline/Cassandra">Display #Cassandra tagline</a></li>
+			                        <li><a href="#/user/get-details/jdoe">Display John details</a></li>			                        
+								</ol>
+							</div>
+						</li>
+						<li>
+							<a ng-click="scenario8 = !scenario8">Scenario 8</a>
+							<div collapse="scenario8">
+								<ol>
+			                        <li><a href="#/line/timeline/jdoe">Display John timeline</a></li>
+									<li><strong><a href="#/tweet/remove/Tweet2">John removes Tweet2</a></strong></li>								
+									<li><strong><a href="#/tweet/remove/Tweet3">John removes Tweet3</a></strong></li>								
+ 									<li><a href="#/line/favoriteline/hsue">Display Helen favorite line</a></li>
+			                        <li><a href="#/user/get-details/jdoe">Display John details</a></li>			                        
+								</ol>
+							</div>
+						</li>
+						<li>
+							<a ng-click="scenario9 = !scenario9">Scenario 9</a>
+							<div collapse="scenario9">
+								<ol>
+			                        <li><a href="#/line/timeline/jdoe">Display John timeline</a></li>
+									<li><strong><a href="#/tweet/remove/Tweet7">John removes Tweet7</a></strong></li>								
+ 									<li><a href="#/line/mentionline/hsue">Display Helen mention line</a></li>
+			                        <li><a href="#/line/mentionline/rsmith">Display Richard mention line</a></li>
+			                        <li><a href="#/user/get-details/jdoe">Display John details</a></li>			                        
+								</ol>
+							</div>
+						</li>																														
+					</ul>
+				</div>
+			</div>
+			<div class="span9" ng-view></div>
+		</div>
+
+		<hr>
+
+		<footer>
+			<p>&copy; Achilles 2013</p>
+		</footer>
+
+	</div>
+
+	<script src="assets/vendors/jquery/jquery.js"></script>
+	<script src="assets/vendors/angular/angular.js"></script>
+	<script src="assets/vendors/angular/angular-resource.min.js"></script>
+	<script src="assets/vendors/angular/angular-route.js"></script>
+	<script src="assets/vendors/ui-utils/include.js"></script>
+	<script src="assets/vendors/bootstrap/bootstrap.js"></script>
+	<script src="assets/vendors/angular-ui/ui-bootstrap-tpls-0.6.0.min.js"></script>
+
+	<script src="assets/scripts/app.js"></script>
+	<script src="assets/scripts/services/dataService.js"></script>
+	<script src="assets/scripts/services/userService.js"></script>
+	<script src="assets/scripts/services/tweetService.js"></script>
+	<script src="assets/scripts/services/lineService.js"></script>
+	<script src="assets/scripts/controllers/databaseController.js"></script>
+	<script src="assets/scripts/controllers/scenarioController.js"></script>
+	<script src="assets/scripts/controllers/userController.js"></script>
+	<script src="assets/scripts/controllers/tweetController.js"></script>
+	<script src="assets/scripts/controllers/lineController.js"></script>
+</body>
+</html>

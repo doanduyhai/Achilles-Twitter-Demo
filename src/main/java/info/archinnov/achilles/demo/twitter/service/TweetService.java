@@ -10,11 +10,14 @@ import info.archinnov.achilles.demo.twitter.entity.compound.TweetIndexKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
-import info.archinnov.achilles.entity.manager.CQLEntityManager;
+import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+
 import javax.inject.Inject;
+
 import org.apache.cassandra.utils.UUIDGen;
 import org.springframework.stereotype.Service;
 
@@ -25,189 +28,165 @@ import org.springframework.stereotype.Service;
  * 
  */
 @Service
-public class TweetService
-{
+public class TweetService {
 
-    @Inject
-    private CQLEntityManager em;
+	@Inject
+	private CQLPersistenceManager manager;
 
-    @Inject
-    private UserService userService;
+	@Inject
+	private UserService userService;
 
-    @Inject
-    private TweetParsingService tweetParsingService;
+	@Inject
+	private TweetParsingService tweetParsingService;
 
-    public UUID createTweet(String authorLogin, String content)
-    {
-        User author = em.find(User.class, authorLogin);
+	public UUID createTweet(String authorLogin, String content) {
+		User author = manager.find(User.class, authorLogin);
 
-        if (author == null)
-        {
-            throw new IllegalArgumentException("User with login '" + authorLogin
-                    + "' does no exist");
-        }
+		if (author == null) {
+			throw new IllegalArgumentException("User with login '" + authorLogin + "' does no exist");
+		}
 
-        UUID uuid = UUIDGen.getTimeUUID();
+		UUID uuid = UUIDGen.getTimeUUID();
 
-        TweetModel tweetModel = new TweetModel(uuid, author, content);
+		TweetModel tweetModel = new TweetModel(uuid, author, content);
 
-        // Initialize tweetIndex entity
-        Tweet tweet = em.find(Tweet.class, tweetModel.getId());
-        if (tweet == null)
-        {
-            tweet = em.merge(new Tweet(tweetModel.getId(), tweetModel));
-        }
+		// Initialize tweetIndex entity
+		Tweet tweet = manager.find(Tweet.class, tweetModel.getId());
+		if (tweet == null) {
+			tweet = manager.merge(new Tweet(tweetModel.getId(), tweetModel));
+		}
 
-        spreadTweetCreation(tweetModel, author.getLogin());
-        spreadTags(tweetModel);
-        spreadUserMention(tweetModel);
+		spreadTweetCreation(tweetModel, author.getLogin());
+		spreadTags(tweetModel);
+		spreadUserMention(tweetModel);
 
-        author.getTweetsCounter().incr();
+		author.getTweetsCounter().incr();
 
-        return uuid;
-    }
+		return uuid;
+	}
 
-    public TweetModel getTweet(String tweetId)
-    {
-        TweetModel tweetModel = null;
-        Tweet tweet = em.find(Tweet.class, UUID.fromString(tweetId));
-        if (tweet != null)
-        {
-            tweetModel = tweet.getTweetModel();
-            tweetModel.setFavoritesCount(tweet.getFavoritesCount().get());
-        }
-        return tweetModel;
-    }
+	public TweetModel getTweet(String tweetId) {
+		TweetModel tweetModel = null;
+		Tweet tweet = manager.find(Tweet.class, UUID.fromString(tweetId));
+		if (tweet != null) {
+			tweetModel = tweet.getTweetModel();
+			tweetModel.setFavoritesCount(tweet.getFavoritesCount().get());
+		}
+		return tweetModel;
+	}
 
-    public Tweet fetchTweetIndex(String tweetId)
-    {
-        Tweet tweet = em.find(Tweet.class, UUID.fromString(tweetId));
-        if (tweet == null)
-        {
-            throw new IllegalArgumentException("Cannot find tweet with id '" + tweetId
-                    + "' to remove");
-        }
-        return tweet;
-    }
+	public Tweet fetchTweetIndex(String tweetId) {
+		Tweet tweet = manager.find(Tweet.class, UUID.fromString(tweetId));
+		if (tweet == null) {
+			throw new IllegalArgumentException("Cannot find tweet with id '" + tweetId + "' to remove");
+		}
+		return tweet;
+	}
 
-    public TweetModel removeTweet(String tweetId)
-    {
+	public TweetModel removeTweet(String tweetId) {
 
-        Tweet tweet = fetchTweetIndex(tweetId);
+		Tweet tweet = fetchTweetIndex(tweetId);
 
-        TweetModel tweetModel = tweet.getTweetModel();
-        UUID id = tweetModel.getId();
+		TweetModel tweetModel = tweet.getTweetModel();
+		UUID id = tweetModel.getId();
 
-        User user = em.find(User.class, tweetModel.getAuthor());
-        em.removeById(Tweet.class, id);
-        user.getTweetsCounter().decr();
-        spreadTweetRemoval(id);
+		User user = manager.find(User.class, tweetModel.getAuthor());
+		manager.removeById(Tweet.class, id);
+		user.getTweetsCounter().decr();
+		spreadTweetRemoval(id);
 
-        em.remove(tweet);
+		manager.remove(tweet);
 
-        return tweetModel;
-    }
+		return tweetModel;
+	}
 
-    private void spreadTweetCreation(TweetModel tweetModel, String userLogin)
-    {
+	private void spreadTweetCreation(TweetModel tweetModel, String userLogin) {
 
-        // Add current tweet to user timeline & userline
-        em.persist(new TweetLine(userLogin, USERLINE, tweetModel));
-        em.persist(new TweetLine(userLogin, TIMELINE, tweetModel));
+		// Add current tweet to user timeline & userline
+		manager.persist(new TweetLine(userLogin, USERLINE, tweetModel));
+		manager.persist(new TweetLine(userLogin, TIMELINE, tweetModel));
 
-        em.persist(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
-        em.persist(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
+		manager.persist(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
+		manager.persist(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
 
-        Iterator<FollowerLoginLine> followersIter = em.sliceQuery(FollowerLoginLine.class)
-                .partitionKey(userLogin)
-                .iterator(100);
+		Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class).partitionKey(userLogin)
+				.iterator(100);
 
-        while (followersIter.hasNext())
-        {
-            String followerLogin = followersIter.next().getId().getLogin();
+		while (followersIter.hasNext()) {
+			String followerLogin = followersIter.next().getId().getLogin();
 
-            // Add tweet to follower timeline
-            em.persist(new TweetLine(followerLogin, TIMELINE, tweetModel));
+			// Add tweet to follower timeline
+			manager.persist(new TweetLine(followerLogin, TIMELINE, tweetModel));
 
-            // Index current tweet as in follower timeline
-            em.persist(new TweetIndex(tweetModel.getId(), TIMELINE, followerLogin));
-        }
-    }
+			// Index current tweet as in follower timeline
+			manager.persist(new TweetIndex(tweetModel.getId(), TIMELINE, followerLogin));
+		}
+	}
 
-    private void spreadTags(TweetModel tweetModel)
-    {
-        Set<String> extractedTags = tweetParsingService.extractTags(tweetModel.getContent());
+	private void spreadTags(TweetModel tweetModel) {
+		Set<String> extractedTags = tweetParsingService.extractTags(tweetModel.getContent());
 
-        for (String tag : extractedTags)
-        {
-            // Add tweet to tagline for each found tag
-            em.persist(new TweetLine(tag, TAGLINE, tweetModel));
+		for (String tag : extractedTags) {
+			// Add tweet to tagline for each found tag
+			manager.persist(new TweetLine(tag, TAGLINE, tweetModel));
 
-            em.persist(new TweetIndex(tweetModel.getId(), TAGLINE, tag));
-        }
-    }
+			manager.persist(new TweetIndex(tweetModel.getId(), TAGLINE, tag));
+		}
+	}
 
-    private void spreadUserMention(TweetModel tweetModel)
-    {
-        Set<String> extractedLogins = tweetParsingService.extractLogins(tweetModel.getContent());
+	private void spreadUserMention(TweetModel tweetModel) {
+		Set<String> extractedLogins = tweetParsingService.extractLogins(tweetModel.getContent());
 
-        for (String userLogin : extractedLogins)
-        {
-            User user = em.find(User.class, userLogin);
-            if (user != null)
-            {
-                em.persist(new TweetIndex(tweetModel.getId(), MENTIONLINE, userLogin));
+		for (String userLogin : extractedLogins) {
+			User user = manager.find(User.class, userLogin);
+			if (user != null) {
+				manager.persist(new TweetIndex(tweetModel.getId(), MENTIONLINE, userLogin));
 
-                // Add tweet to user's mention line for each login found
-                em.persist(new TweetLine(userLogin, MENTIONLINE, tweetModel));
+				// Add tweet to user's mention line for each login found
+				manager.persist(new TweetLine(userLogin, MENTIONLINE, tweetModel));
 
-                // Increment user mention counter
-                user.getMentionsCounter().incr();
-            }
-        }
-    }
+				// Increment user mention counter
+				user.getMentionsCounter().incr();
+			}
+		}
+	}
 
-    private void spreadTweetRemoval(UUID tweetId)
-    {
-        // Retrieve tweet indexes
-        Iterator<TweetIndex> tweetIndexIter = em.sliceQuery(TweetIndex.class)
-                .partitionKey(tweetId)
-                .iterator(100);
+	private void spreadTweetRemoval(UUID tweetId) {
+		// Retrieve tweet indexes
+		Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class).partitionKey(tweetId).iterator(100);
 
-        while (tweetIndexIter.hasNext())
-        {
-            TweetIndexKey tweetIndex = tweetIndexIter.next().getId();
-            LineType type = tweetIndex.getType();
-            String userLoginOrTag = tweetIndex.getLoginOrTag();
+		while (tweetIndexIter.hasNext()) {
+			TweetIndexKey tweetIndex = tweetIndexIter.next().getId();
+			LineType type = tweetIndex.getType();
+			String userLoginOrTag = tweetIndex.getLoginOrTag();
 
-            switch (type)
-            {
-                case USERLINE:
-                    em.removeById(TweetLine.class, new TweetKey(userLoginOrTag, USERLINE, tweetId));
-                    em.removeById(TweetIndex.class, new TweetIndexKey(tweetId, USERLINE, userLoginOrTag));
-                    break;
+			switch (type) {
+			case USERLINE:
+				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, USERLINE, tweetId));
+				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, USERLINE, userLoginOrTag));
+				break;
 
-                case TIMELINE:
-                    em.removeById(TweetLine.class, new TweetKey(userLoginOrTag, TIMELINE, tweetId));
-                    em.removeById(TweetIndex.class, new TweetIndexKey(tweetId, TIMELINE, userLoginOrTag));
-                    break;
+			case TIMELINE:
+				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, TIMELINE, tweetId));
+				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, TIMELINE, userLoginOrTag));
+				break;
 
-                case FAVORITELINE:
-                    em.removeById(TweetLine.class, new TweetKey(userLoginOrTag, FAVORITELINE, tweetId));
-                    em.removeById(TweetIndex.class, new TweetIndexKey(tweetId, FAVORITELINE, userLoginOrTag));
-                    break;
+			case FAVORITELINE:
+				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, FAVORITELINE, tweetId));
+				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, FAVORITELINE, userLoginOrTag));
+				break;
 
-                case MENTIONLINE:
-                    em.removeById(TweetLine.class, new TweetKey(userLoginOrTag, MENTIONLINE, tweetId));
-                    em.removeById(TweetIndex.class, new TweetIndexKey(tweetId, MENTIONLINE, userLoginOrTag));
-                    break;
+			case MENTIONLINE:
+				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, MENTIONLINE, tweetId));
+				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, MENTIONLINE, userLoginOrTag));
+				break;
 
-                case TAGLINE:
-                    em.removeById(TweetLine.class, new TweetKey(userLoginOrTag, TAGLINE, tweetId));
-                    em.removeById(TweetIndex.class, new TweetIndexKey(tweetId, TAGLINE, userLoginOrTag));
-                    break;
-            }
-        }
+			case TAGLINE:
+				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, TAGLINE, tweetId));
+				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, TAGLINE, userLoginOrTag));
+				break;
+			}
+		}
 
-    }
+	}
 }

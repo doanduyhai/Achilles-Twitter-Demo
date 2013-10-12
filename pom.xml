@@ -10,7 +10,7 @@
 	<properties>
 		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<achilles.version>2.0.3</achilles.version>
+		<achilles.version>2.0.8</achilles.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
 	</properties>
 
@@ -21,6 +21,12 @@
 		<groupId>info.archinnov</groupId>
 		<artifactId>achilles-cql</artifactId>
 		<version>${achilles.version}</version>
+		<exclusions>
+			<exclusion>
+				<artifactId>snappy-java</artifactId>
+				<groupId>org.xerial.snappy</groupId>
+			</exclusion>
+		</exclusions>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
@@ -46,12 +52,6 @@
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-webmvc</artifactId>
 		<version>${spring.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.cassandraunit</groupId>
-		<artifactId>cassandra-unit</artifactId>
-		<version>1.1.2.1</version>
-		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>javax.inject</groupId>
@@ -81,7 +81,12 @@
 		<version>1.2.3</version>
 		<scope>test</scope>
 	</dependency>
-	</dependencies>
+	<dependency>
+		<groupId>org.xerial.snappy</groupId>
+		<artifactId>snappy-java</artifactId>
+		<version>1.1.0-M4</version>
+	</dependency>
+  </dependencies>
 
 
 
@@ -100,6 +105,7 @@
    			<plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
+<!--                 <version>8.1.13.v20130916</version> -->
                 <version>8.0.4.v20111024</version>
                 <configuration>
 					<webAppConfig>

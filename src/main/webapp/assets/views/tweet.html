@@ -1,0 +1,14 @@
+<div class="row" ng-controller="TweetCtrl">
+    <section class="offset1" ng-if="action==='create'">
+    	<ui-include src="'assets/views/templates/tweet-creation.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="action==='remove'">
+    	<ui-include src="'assets/views/templates/tweet-deletion.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="action==='get-details'">
+    	<ui-include src="'assets/views/templates/tweet-details.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="action==='favorites'">
+    	<ui-include src="'assets/views/templates/tweet-favorite.html'"></ui-include>
+    </section>
+</div>

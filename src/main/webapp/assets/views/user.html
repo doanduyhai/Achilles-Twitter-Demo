@@ -1,0 +1,14 @@
+<div class="row" ng-controller="UserCtrl">
+    <section class="offset1" ng-if="action==='create'">
+    	<ui-include src="'assets/views/templates/user-creation.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="action==='follows' || action==='unfollows'">
+    	<ui-include src="'assets/views/templates/user-manage-relations.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="action==='get-details'">
+    	<ui-include src="'assets/views/templates/user-details.html'"></ui-include>
+    </section>
+    <section class="offset1" ng-if="action==='list-followers' || action==='list-friends'">
+    	<ui-include src="'assets/views/templates/user-list-relations.html'"></ui-include>
+    </section>
+</div>

@@ -1,8 +1,4 @@
-For an example of an advanced usage of **Achilles**, you can check out the **[Twitter Demo]** application.
-
-Before reading this advanced demo, you should first read the chapters on **[Clustered Entity]**, **[Value-less Entity]** and **[Counters]**.
-
-This application is a Twitter clone back-end and offers a restful API. You need to have a client to interact with the API.As an example, scripts for Chrome **[Postman REST Client]** are provided (in the **Postman_Client_Scripts** folder) but of course you can use any client of your own.
+This application is a Twitter clone back-end and offers a restful API. An HTML client built with **[AngularJS]** is provided to interact with the back-end.
 
 1. **[Back-end API]**
 2. **[Entity Modeling]**
@@ -20,17 +16,16 @@ This application is a Twitter clone back-end and offers a restful API. You need 
     1. **[Prerequisites]**
     2. **[Keyspace creation]**
     2. **[Running the demo]**
-5. **[Testing with Postman REST Client]**
-    1. **[Installing the client]**
-    2. **[Importing scripts]**
-    3. **[Playing scenarios]**
+5. **[Testing with HTML Client]**
+    1. **[Running the client]**
+    2. **[Playing scenarios]**
 
 
 [Twitter Demo]: https://github.com/doanduyhai/Achilles-Twitter-Demo/
 [Clustered Entity]: https://github.com/doanduyhai/Achilles/wiki/Entity-Mapping#clustered-entity
 [Value-less Entity]: https://github.com/doanduyhai/Achilles/wiki/Entity-Mapping#value-less-entity
 [Counters]: https://github.com/doanduyhai/Achilles/wiki/Counters
-[Postman REST Client]: https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm
+[AngularJS]: http://angularjs.org/
 [Back-end API]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-API
 [Entity Modeling]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling
 [Modeling Users]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Entity-Modeling#modeling-users
@@ -47,7 +42,6 @@ This application is a Twitter clone back-end and offers a restful API. You need 
 [Prerequisites]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Running#prerequisites
 [Keyspace creation]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Running#keyspace-creation
 [Running the demo]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Running#running-the-demo
-[Testing with Postman REST Client]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Postman-Client
-[Installing the client]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Postman-Client#installing-the-client
-[Importing scripts]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Postman-Client#importing-scripts
-[Playing scenarios]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-Postman-Client#playing-scenarios
+[Testing with HTML Client]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-HTML-Client
+[Running the client]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-HTML-Client#running-the-client
+[Playing scenarios]: https://github.com/doanduyhai/Achilles/wiki/Twitter-Demo-HTML-Client#playing-scenarios

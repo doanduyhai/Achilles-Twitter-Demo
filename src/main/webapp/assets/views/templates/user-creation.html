@@ -1,0 +1,25 @@
+<div>
+	<h3>Create user {{user_to_create.firstname}}
+		{{user_to_create.lastname}}</h3>
+	<div class="form-horizontal">	
+		<span class="badge badge-warning">POST</span>
+		&nbsp;&nbsp;
+		<span><strong>/user</strong></span>
+	</div>
+	<br/>		
+	<textarea disabled rows="5" class="span4" ng-model="user_payload"
+		ng-trim="false"></textarea>
+	<br />
+	<br />
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="createUser()">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#user-details'"/>
+	</div>
+</div>

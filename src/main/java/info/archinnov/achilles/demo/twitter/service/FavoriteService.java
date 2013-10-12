@@ -6,7 +6,7 @@ import info.archinnov.achilles.demo.twitter.entity.TweetIndex;
 import info.archinnov.achilles.demo.twitter.entity.TweetLine;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetIndexKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
-import info.archinnov.achilles.entity.manager.CQLEntityManager;
+import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
 import java.util.UUID;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
@@ -21,18 +21,18 @@ public class FavoriteService {
     private TweetService tweetService;
 
     @Inject
-    private CQLEntityManager em;
+    private CQLPersistenceManager manager;
 
     public void addTweetToFavorite(String userLogin, String tweetId) {
 
         Tweet tweet = tweetService.fetchTweetIndex(tweetId);
         UUID id = UUID.fromString(tweetId);
 
-        TweetLine favoriteLine = em.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
+        TweetLine favoriteLine = manager.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
 
         if (favoriteLine == null) {
-            em.persist(new TweetLine(userLogin, FAVORITELINE, tweet.getTweetModel()));
-            em.persist(new TweetIndex(id, FAVORITELINE, userLogin));
+            manager.persist(new TweetLine(userLogin, FAVORITELINE, tweet.getTweetModel()));
+            manager.persist(new TweetIndex(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().incr();
         }
     }
@@ -42,11 +42,11 @@ public class FavoriteService {
         Tweet tweet = tweetService.fetchTweetIndex(tweetId);
         UUID id = tweet.getId();
 
-        TweetLine favoriteLine = em.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
+        TweetLine favoriteLine = manager.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
 
         if (favoriteLine != null) {
-            em.remove(favoriteLine);
-            em.removeById(TweetIndex.class, new TweetIndexKey(id, FAVORITELINE, userLogin));
+            manager.remove(favoriteLine);
+            manager.removeById(TweetIndex.class, new TweetIndexKey(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().decr();
         }
     }

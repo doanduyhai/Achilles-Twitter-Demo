@@ -1,0 +1,23 @@
+<div>
+	<h3>{{user.firstname}} {{user.lastname}} now {{action}}
+		{{friend.firstname}} {{friend.lastname}}</h3>
+	
+	<div class="form-horizontal">	
+		<span class="badge badge-info" ng-show="{{action==='follows'}}">PUT</span>
+		<span class="badge badge-important" ng-show="{{action==='unfollows'}}">DELETE</span>
+		&nbsp;&nbsp;
+		<span><strong>/user/friend?userLogin={{userLogin}}&friendLogin={{friendLogin}}</strong></span>					
+	</div>
+	<br />
+	<button type="button" class="btn btn-primary text-center"
+		ng-click="manageRelations()">Execute</button>
+</div>
+<hr />
+<div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#server-reply'"/>
+	</div>
+	<div>
+		<ui-include src="'assets/views/templates/common.html'" fragment="'#user-details'"/>
+	</div>	
+</div>
