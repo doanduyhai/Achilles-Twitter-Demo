@@ -50,15 +50,18 @@
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<property name="messageConverters" ref="defaultMessageConverters"/>
 	</bean>
-	
-	<bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.integration.spring.CQLPersistenceManagerFactoryBean">
-		<property name="entityPackages" value="info.archinnov.achilles.demo.twitter.entity"/>
-		<property name="contactPoints" value="localhost"/>
-		<property name="port" value="9042"/>
-		<property name="keyspaceName" value="achilles"/>
-		<property name="objectMapper" ref="objectMapperFactoryBean"/>
-		<property name="consistencyLevelReadDefault" value="ONE"/>
-		<property name="consistencyLevelWriteDefault" value="ONE"/>
-		<property name="forceColumnFamilyCreation" value="true" />
-	</bean>	
+
+
+    <bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.demo.twitter.embedded.EmbeddedCassandraFactoryBean"/>
+
+	<!--<bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.integration.spring.CQLPersistenceManagerFactoryBean">-->
+		<!--<property name="entityPackages" value="info.archinnov.achilles.demo.twitter.entity"/>-->
+		<!--<property name="contactPoints" value="localhost"/>-->
+		<!--<property name="port" value="9042"/>-->
+		<!--<property name="keyspaceName" value="achilles"/>-->
+		<!--<property name="objectMapper" ref="objectMapperFactoryBean"/>-->
+		<!--<property name="consistencyLevelReadDefault" value="ONE"/>-->
+		<!--<property name="consistencyLevelWriteDefault" value="ONE"/>-->
+		<!--<property name="forceColumnFamilyCreation" value="true" />-->
+	<!--</bean>	-->
 </beans>

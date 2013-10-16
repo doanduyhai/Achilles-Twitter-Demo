@@ -12,6 +12,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<achilles.version>2.0.8</achilles.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <pover.mock.version>1.4.9</pover.mock.version>
+        <fest.assert.version>2.0M8</fest.assert.version>
+        <fest.util.version>1.2.3</fest.util.version>
+        <snappy.version>1.1.0-M4</snappy.version>
+        <junit.version>4.10</junit.version>
 	</properties>
 
 	<dependencies>
@@ -61,30 +67,35 @@
 	<dependency>
 		<groupId>commons-lang</groupId>
 		<artifactId>commons-lang</artifactId>
-		<version>2.6</version>
+		<version>${commons.lang.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.powermock</groupId>
 		<artifactId>powermock-api-mockito</artifactId>
-		<version>1.4.9</version>
+		<version>${pover.mock.version}</version>
 		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.easytesting</groupId>
 		<artifactId>fest-assert-core</artifactId>
-		<version>2.0M8</version>
+		<version>${fest.assert.version}</version>
 		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.easytesting</groupId>
 		<artifactId>fest-util</artifactId>
-		<version>1.2.3</version>
+		<version>${fest.util.version}</version>
 		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.xerial.snappy</groupId>
 		<artifactId>snappy-java</artifactId>
-		<version>1.1.0-M4</version>
+		<version>${snappy.version}</version>
+	</dependency>
+    <dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>${junit.version}</version>
 	</dependency>
   </dependencies>
 
@@ -113,7 +124,7 @@
             		</webAppConfig>	                
                     <scanIntervalSeconds>1</scanIntervalSeconds>
                     <stopKey>stop-jetty</stopKey>
-                    <contextPath>/achillesTwitter</contextPath>
+                    <!--<contextPath>/achillesTwitter</contextPath>-->
                     <stopPort>9999</stopPort>
                 </configuration>
             </plugin>			
