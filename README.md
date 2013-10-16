@@ -14,7 +14,7 @@ This application is a Twitter clone back-end and offers a restful API. An HTML c
     4. **[Managing Tweet Removal]**
 4. **[Running the back-end]**
     1. **[Prerequisites]**
-    2. **[Keyspace creation]**
+    2. **[Keyspace creation]** (Optional)
     2. **[Running the demo]**
 5. **[Testing with HTML Client]**
     1. **[Running the client]**
