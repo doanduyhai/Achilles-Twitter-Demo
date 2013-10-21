@@ -30,6 +30,10 @@ twitterDemoModule.service('dataService', function($http) {
 		tweets: {}
 	};
 	
+	this.cleanData = function() {
+		repository.tweets = {};
+	}
+	
 	this.getUserByLogin = function(login) {
 		return repository.user_creation[login];
 	};
@@ -47,7 +51,7 @@ twitterDemoModule.service('dataService', function($http) {
 		if(tweetId) {
 			return tweetId.replace(/"/g,'');
 		} else {
-			return "NO_TWEET_ID_FOUND";
+			return "<input tweet id here>";
         }
 	};
 	

@@ -18,7 +18,7 @@ twitterDemoModule.service('tweetService', [ '$http','dataService', function($htt
 			$dataService.removeTweetId(tweetName);
 			success(data,status);
 		};
-		$http.delete('tweet?tweetId='+tweetId).success(successFn).error(error);
+		$http.delete('tweet?tweetId='+tweetId).success(successFn).error(error); 
 	};
 	
 	this.favorite = function(tweetId,login,success,error) {
