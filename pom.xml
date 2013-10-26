@@ -10,14 +10,13 @@
 	<properties>
 		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<achilles.version>2.0.8</achilles.version>
+		<achilles.version>2.0.9-SNAPSHOT</achilles.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
         <commons.lang.version>2.6</commons.lang.version>
         <pover.mock.version>1.4.9</pover.mock.version>
         <fest.assert.version>2.0M8</fest.assert.version>
         <fest.util.version>1.2.3</fest.util.version>
         <snappy.version>1.1.0-M4</snappy.version>
-        <junit.version>4.10</junit.version>
 	</properties>
 
 	<dependencies>
@@ -91,11 +90,6 @@
 		<groupId>org.xerial.snappy</groupId>
 		<artifactId>snappy-java</artifactId>
 		<version>${snappy.version}</version>
-	</dependency>
-    <dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>${junit.version}</version>
 	</dependency>
   </dependencies>
 

@@ -12,12 +12,14 @@
 	
 
  	<logger name="org.springframework.web">
-		<level value="DEBUG" />
+		<level value="WARN" />
 	</logger>
 	<logger name="ACHILLES_DDL_SCRIPT">
 		<level value="DEBUG" />
 	</logger>
-
+    <logger name="info.archinnov.achilles">
+        <level value="INFO" />
+    </logger>
 	<!-- ********************************************************* -->
 	<!-- Root Loggers                                              -->
 	<!-- ********************************************************* -->

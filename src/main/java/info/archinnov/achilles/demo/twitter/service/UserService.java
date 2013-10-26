@@ -94,7 +94,7 @@ public class UserService {
 	}
 
 	public List<User> getFriends(String userLogin, int length) {
-		List<UserRelation> friendLines = manager.sliceQuery(UserRelation.class).partitionKey(userLogin)
+		List<UserRelation> friendLines = manager.sliceQuery(UserRelation.class).partitionComponents(userLogin)
 				.fromClusterings(FRIEND).toClusterings(FRIEND).ordering(OrderingMode.ASCENDING).get(length);
 
 		return FluentIterable.from(friendLines).transform(userLineToUser).toImmutableList();
@@ -102,7 +102,7 @@ public class UserService {
 	}
 
 	public List<User> getFollowers(String userLogin, int length) {
-		List<UserRelation> followerLines = manager.sliceQuery(UserRelation.class).partitionKey(userLogin)
+		List<UserRelation> followerLines = manager.sliceQuery(UserRelation.class).partitionComponents(userLogin)
 				.ordering(OrderingMode.ASCENDING).getFirst(length, FOLLOWER);
 
 		return FluentIterable.from(followerLines).transform(userLineToUser).toImmutableList();

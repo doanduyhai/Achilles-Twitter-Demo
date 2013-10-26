@@ -84,7 +84,7 @@ public class LineService
 
     private List<TweetLine> fetchData(String partitionKey, LineType type, int length) {
         List<TweetLine> line = manager.sliceQuery(TweetLine.class)
-                .partitionKey(partitionKey)
+                .partitionComponents(partitionKey)
                 .fromClusterings(type)
                 .toClusterings(type)
                 .ordering(OrderingMode.DESCENDING)

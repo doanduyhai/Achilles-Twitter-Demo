@@ -109,7 +109,7 @@ public class TweetService {
 		manager.persist(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
 		manager.persist(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
 
-		Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class).partitionKey(userLogin)
+		Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class).partitionComponents(userLogin)
 				.iterator(100);
 
 		while (followersIter.hasNext()) {
@@ -153,7 +153,7 @@ public class TweetService {
 
 	private void spreadTweetRemoval(UUID tweetId) {
 		// Retrieve tweet indexes
-		Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class).partitionKey(tweetId).iterator(100);
+		Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class).partitionComponents(tweetId).iterator(100);
 
 		while (tweetIndexIter.hasNext()) {
 			TweetIndexKey tweetIndex = tweetIndexIter.next().getId();
