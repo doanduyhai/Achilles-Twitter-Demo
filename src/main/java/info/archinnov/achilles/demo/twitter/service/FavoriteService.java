@@ -6,7 +6,7 @@ import info.archinnov.achilles.demo.twitter.entity.TweetIndex;
 import info.archinnov.achilles.demo.twitter.entity.TweetLine;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetIndexKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
-import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+import info.archinnov.achilles.persistence.PersistenceManager;
 import java.util.UUID;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class FavoriteService {
     private TweetService tweetService;
 
     @Inject
-    private CQLPersistenceManager manager;
+    private PersistenceManager manager;
 
     public void addTweetToFavorite(String userLogin, String tweetId) {
 
@@ -34,6 +34,7 @@ public class FavoriteService {
             manager.persist(new TweetLine(userLogin, FAVORITELINE, tweet.getTweetModel()));
             manager.persist(new TweetIndex(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().incr();
+            manager.update(tweet);
         }
     }
 
@@ -48,6 +49,7 @@ public class FavoriteService {
             manager.remove(favoriteLine);
             manager.removeById(TweetIndex.class, new TweetIndexKey(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().decr();
+            manager.update(tweet);
         }
     }
 }

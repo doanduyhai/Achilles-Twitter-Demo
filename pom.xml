@@ -8,15 +8,15 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<java-version>1.6</java-version>
+		<java-version>1.7</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<achilles.version>2.0.9-SNAPSHOT</achilles.version>
+		<achilles.version>3.0.1</achilles.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
-        <commons.lang.version>2.6</commons.lang.version>
-        <pover.mock.version>1.4.9</pover.mock.version>
-        <fest.assert.version>2.0M8</fest.assert.version>
-        <fest.util.version>1.2.3</fest.util.version>
-        <snappy.version>1.1.0-M4</snappy.version>
+	        <commons.lang.version>2.6</commons.lang.version>
+        	<pover.mock.version>1.4.9</pover.mock.version>
+	        <fest.assert.version>2.0M8</fest.assert.version>
+	        <fest.util.version>1.2.3</fest.util.version>
+	        <snappy.version>1.1.0-M4</snappy.version>
 	</properties>
 
 	<dependencies>
@@ -24,7 +24,7 @@
 
 	<dependency>
 		<groupId>info.archinnov</groupId>
-		<artifactId>achilles-cql</artifactId>
+		<artifactId>achilles-core</artifactId>
 		<version>${achilles.version}</version>
 		<exclusions>
 			<exclusion>
@@ -33,6 +33,11 @@
 			</exclusion>
 		</exclusions>
 	</dependency>
+        <dependency>
+            <groupId>info.archinnov</groupId>
+            <artifactId>achilles-embedded</artifactId>
+            <version>${achilles.version}</version>
+        </dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-beans</artifactId>

@@ -5,7 +5,8 @@ import info.archinnov.achilles.demo.twitter.entity.FollowerLoginLine;
 import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.demo.twitter.entity.UserRelation;
 import info.archinnov.achilles.demo.twitter.entity.compound.UserKey;
-import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+import info.archinnov.achilles.exception.AchillesStaleObjectStateException;
+import info.archinnov.achilles.persistence.PersistenceManager;
 import info.archinnov.achilles.type.OrderingMode;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import com.google.common.collect.FluentIterable;
 public class UserService {
 
 	@Inject
-	private CQLPersistenceManager manager;
+	private PersistenceManager manager;
 
 	private Function<UserRelation, User> userLineToUser = new Function<UserRelation, User>() {
 
@@ -54,17 +55,20 @@ public class UserService {
 		UserRelation foundFriend = manager.find(UserRelation.class, new UserKey(userLogin, FRIEND, friendLogin));
 
 		if (foundFriend == null) {
-			User rawFiend = manager.unwrap(friend);
-			User rawUser = manager.unwrap(user);
+			User rawFiend = manager.removeProxy(friend);
+			User rawUser = manager.removeProxy(user);
 
 			manager.persist(new UserRelation(userLogin, FRIEND, rawFiend));
 			user.getFriendsCounter().incr();
+            manager.update(user);
 
-			manager.persist(new UserRelation(friendLogin, FOLLOWER, rawUser));
-			manager.persist(new FollowerLoginLine(friendLogin, user));
-			friend.getFollowersCounter().incr();
+            friend.getFollowersCounter().incr();
+            manager.update(friend);
 
-			return manager.initAndUnwrap(friend);
+            manager.persist(new UserRelation(friendLogin, FOLLOWER, rawUser));
+            manager.persist(new FollowerLoginLine(friendLogin, user));
+
+			return manager.initAndRemoveProxy(friend);
 		} else {
 			throw new IllegalArgumentException("User with login '" + userLogin + "' has '" + friendLogin
 					+ "' as friend already");
@@ -80,12 +84,15 @@ public class UserService {
 		if (foundFriend != null) {
 			manager.remove(foundFriend);
 			user.getFriendsCounter().decr();
+            manager.update(user);
 
-			manager.removeById(UserRelation.class, new UserKey(friendLogin, FOLLOWER, userLogin));
-			manager.removeById(FollowerLoginLine.class, new UserKey(friendLogin, FOLLOWER, userLogin));
-			friend.getFollowersCounter().decr();
+            friend.getFollowersCounter().decr();
+            manager.update(friend);
 
-			return manager.initAndUnwrap(friend);
+            manager.removeById(UserRelation.class, new UserKey(friendLogin, FOLLOWER, userLogin));
+            manager.removeById(FollowerLoginLine.class, new UserKey(friendLogin, FOLLOWER, userLogin));
+
+            return manager.initAndRemoveProxy(friend);
 		} else {
 			throw new IllegalArgumentException("User with login '" + userLogin + "' does not have '" + friendLogin
 					+ "' as friend");
@@ -112,7 +119,7 @@ public class UserService {
 	public User getUser(String userLogin) {
 
 		User user = loadUser(userLogin);
-		User unwrap = manager.initAndUnwrap(user);
+		User unwrap = manager.initAndRemoveProxy(user);
 		return unwrap;
 	}
 
