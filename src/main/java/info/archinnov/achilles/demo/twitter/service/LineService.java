@@ -4,7 +4,7 @@ import static info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.Line
 import info.archinnov.achilles.demo.twitter.entity.TweetLine;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
-import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+import info.archinnov.achilles.persistence.PersistenceManager;
 import info.archinnov.achilles.type.OrderingMode;
 import java.util.List;
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ public class LineService
     private UserService userService;
 
     @Inject
-    private CQLPersistenceManager manager;
+    private PersistenceManager manager;
 
     private Function<TweetLine, TweetModel> lineToTweet = new Function<TweetLine, TweetModel>() {
 

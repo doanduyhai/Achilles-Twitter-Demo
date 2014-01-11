@@ -10,7 +10,7 @@ import info.archinnov.achilles.demo.twitter.entity.compound.TweetIndexKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
-import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+import info.archinnov.achilles.persistence.PersistenceManager;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class TweetService {
 
 	@Inject
-	private CQLPersistenceManager manager;
+	private PersistenceManager manager;
 
 	@Inject
 	private UserService userService;
@@ -53,7 +53,7 @@ public class TweetService {
 		// Initialize tweetIndex entity
 		Tweet tweet = manager.find(Tweet.class, tweetModel.getId());
 		if (tweet == null) {
-			tweet = manager.merge(new Tweet(tweetModel.getId(), tweetModel));
+			manager.persist(new Tweet(tweetModel.getId(), tweetModel));
 		}
 
 		spreadTweetCreation(tweetModel, author.getLogin());
@@ -61,6 +61,8 @@ public class TweetService {
 		spreadUserMention(tweetModel);
 
 		author.getTweetsCounter().incr();
+
+        manager.update(author);
 
 		return uuid;
 	}
@@ -92,10 +94,13 @@ public class TweetService {
 
 		User user = manager.find(User.class, tweetModel.getAuthor());
 		manager.removeById(Tweet.class, id);
-		user.getTweetsCounter().decr();
-		spreadTweetRemoval(id);
 
-		manager.remove(tweet);
+        user.getTweetsCounter().decr();
+        manager.update(user);
+
+        spreadTweetRemoval(id);
+
+        manager.remove(tweet);
 
 		return tweetModel;
 	}
@@ -147,6 +152,7 @@ public class TweetService {
 
 				// Increment user mention counter
 				user.getMentionsCounter().incr();
+                manager.update(user);
 			}
 		}
 	}

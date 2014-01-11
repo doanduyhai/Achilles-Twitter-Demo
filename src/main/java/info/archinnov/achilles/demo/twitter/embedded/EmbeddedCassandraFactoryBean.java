@@ -1,24 +1,24 @@
 package info.archinnov.achilles.demo.twitter.embedded;
 
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import info.archinnov.achilles.embedded.CQLEmbeddedServerBuilder;
-import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+import info.archinnov.achilles.embedded.CassandraEmbeddedServerBuilder;
+import info.archinnov.achilles.persistence.PersistenceManager;
 
-public class EmbeddedCassandraFactoryBean extends AbstractFactoryBean<CQLPersistenceManager> {
-    private static CQLPersistenceManager manager;
+public class EmbeddedCassandraFactoryBean extends AbstractFactoryBean<PersistenceManager> {
+    private static PersistenceManager manager;
 
     static {
-        manager = CQLEmbeddedServerBuilder
+        manager = CassandraEmbeddedServerBuilder
                 .withEntityPackages("info.archinnov.achilles.demo.twitter.entity")
                 .withKeyspaceName("achilles_twitter")
-                .cleanDataFilesAtStartup()
+                .cleanDataFilesAtStartup(true)
                 .withCQLPort(9041)
                 .buildPersistenceManager();
     }
 
     @Override
     public Class<?> getObjectType() {
-        return CQLPersistenceManager.class;
+        return PersistenceManager.class;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class EmbeddedCassandraFactoryBean extends AbstractFactoryBean<CQLPersist
     }
 
     @Override
-    protected CQLPersistenceManager createInstance() throws Exception {
+    protected PersistenceManager createInstance() throws Exception {
         return manager;
     }
 }

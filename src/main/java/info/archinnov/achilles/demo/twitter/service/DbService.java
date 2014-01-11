@@ -3,13 +3,13 @@ package info.archinnov.achilles.demo.twitter.service;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import com.datastax.driver.core.Session;
-import info.archinnov.achilles.entity.manager.CQLPersistenceManager;
+import info.archinnov.achilles.persistence.PersistenceManager;
 
 @Service
 public class DbService {
 
     @Inject
-    private CQLPersistenceManager manager;
+    private PersistenceManager manager;
 
     public void resetDb() {
 
