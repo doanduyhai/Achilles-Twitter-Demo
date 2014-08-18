@@ -53,7 +53,7 @@ public class TweetService {
 		// Initialize tweetIndex entity
 		Tweet tweet = manager.find(Tweet.class, tweetModel.getId());
 		if (tweet == null) {
-			manager.persist(new Tweet(tweetModel.getId(), tweetModel));
+			manager.insert(new Tweet(tweetModel.getId(), tweetModel));
 		}
 
 		spreadTweetCreation(tweetModel, author.getLogin());
@@ -108,23 +108,25 @@ public class TweetService {
 	private void spreadTweetCreation(TweetModel tweetModel, String userLogin) {
 
 		// Add current tweet to user timeline & userline
-		manager.persist(new TweetLine(userLogin, USERLINE, tweetModel));
-		manager.persist(new TweetLine(userLogin, TIMELINE, tweetModel));
+		manager.insert(new TweetLine(userLogin, USERLINE, tweetModel));
+		manager.insert(new TweetLine(userLogin, TIMELINE, tweetModel));
 
-		manager.persist(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
-		manager.persist(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
+		manager.insert(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
+		manager.insert(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
 
-		Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class).partitionComponents(userLogin)
+		Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class)
+                .forIteration()
+                .withPartitionComponents(userLogin)
 				.iterator(100);
 
 		while (followersIter.hasNext()) {
 			String followerLogin = followersIter.next().getId().getLogin();
 
 			// Add tweet to follower timeline
-			manager.persist(new TweetLine(followerLogin, TIMELINE, tweetModel));
+			manager.insert(new TweetLine(followerLogin, TIMELINE, tweetModel));
 
 			// Index current tweet as in follower timeline
-			manager.persist(new TweetIndex(tweetModel.getId(), TIMELINE, followerLogin));
+			manager.insert(new TweetIndex(tweetModel.getId(), TIMELINE, followerLogin));
 		}
 	}
 
@@ -133,9 +135,9 @@ public class TweetService {
 
 		for (String tag : extractedTags) {
 			// Add tweet to tagline for each found tag
-			manager.persist(new TweetLine(tag, TAGLINE, tweetModel));
+			manager.insert(new TweetLine(tag, TAGLINE, tweetModel));
 
-			manager.persist(new TweetIndex(tweetModel.getId(), TAGLINE, tag));
+			manager.insert(new TweetIndex(tweetModel.getId(), TAGLINE, tag));
 		}
 	}
 
@@ -145,10 +147,10 @@ public class TweetService {
 		for (String userLogin : extractedLogins) {
 			User user = manager.find(User.class, userLogin);
 			if (user != null) {
-				manager.persist(new TweetIndex(tweetModel.getId(), MENTIONLINE, userLogin));
+				manager.insert(new TweetIndex(tweetModel.getId(), MENTIONLINE, userLogin));
 
 				// Add tweet to user's mention line for each login found
-				manager.persist(new TweetLine(userLogin, MENTIONLINE, tweetModel));
+				manager.insert(new TweetLine(userLogin, MENTIONLINE, tweetModel));
 
 				// Increment user mention counter
 				user.getMentionsCounter().incr();
@@ -159,7 +161,10 @@ public class TweetService {
 
 	private void spreadTweetRemoval(UUID tweetId) {
 		// Retrieve tweet indexes
-		Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class).partitionComponents(tweetId).iterator(100);
+		Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class)
+                .forIteration()
+                .withPartitionComponents(tweetId)
+                .iterator(100);
 
 		while (tweetIndexIter.hasNext()) {
 			TweetIndexKey tweetIndex = tweetIndexIter.next().getId();

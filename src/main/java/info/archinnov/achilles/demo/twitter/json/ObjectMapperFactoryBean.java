@@ -1,11 +1,13 @@
 package info.archinnov.achilles.demo.twitter.json;
 
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -19,14 +21,12 @@ public class ObjectMapperFactoryBean implements FactoryBean<ObjectMapper> {
 
 	public ObjectMapperFactoryBean() {
 		this.objectMapper = new ObjectMapper();
-		this.objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-		this.objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-		AnnotationIntrospector primary = new JacksonAnnotationIntrospector();
-		AnnotationIntrospector secondary = new JaxbAnnotationIntrospector();
-		AnnotationIntrospector pair = new AnnotationIntrospector.Pair(primary, secondary);
-
-		this.objectMapper.setAnnotationIntrospector(pair);
+        AnnotationIntrospector primary = new com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector();
+        AnnotationIntrospector secondary = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
+        this.objectMapper.setAnnotationIntrospector(com.fasterxml.jackson.databind.AnnotationIntrospector.pair(primary, secondary));
 	}
 
 	@Override

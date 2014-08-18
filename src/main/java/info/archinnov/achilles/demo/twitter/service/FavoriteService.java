@@ -31,8 +31,8 @@ public class FavoriteService {
         TweetLine favoriteLine = manager.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
 
         if (favoriteLine == null) {
-            manager.persist(new TweetLine(userLogin, FAVORITELINE, tweet.getTweetModel()));
-            manager.persist(new TweetIndex(id, FAVORITELINE, userLogin));
+            manager.insert(new TweetLine(userLogin, FAVORITELINE, tweet.getTweetModel()));
+            manager.insert(new TweetIndex(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().incr();
             manager.update(tweet);
         }

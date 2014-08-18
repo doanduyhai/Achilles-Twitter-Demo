@@ -5,9 +5,7 @@ import info.archinnov.achilles.demo.twitter.entity.FollowerLoginLine;
 import info.archinnov.achilles.demo.twitter.entity.User;
 import info.archinnov.achilles.demo.twitter.entity.UserRelation;
 import info.archinnov.achilles.demo.twitter.entity.compound.UserKey;
-import info.archinnov.achilles.exception.AchillesStaleObjectStateException;
 import info.archinnov.achilles.persistence.PersistenceManager;
-import info.archinnov.achilles.type.OrderingMode;
 
 import java.util.List;
 
@@ -44,7 +42,7 @@ public class UserService {
 		}
 
 		User user = new User(lightUser.getLogin(), lightUser.getFirstname(), lightUser.getLastname());
-		manager.persist(user);
+		manager.insert(user);
 		return user;
 	}
 
@@ -58,15 +56,15 @@ public class UserService {
 			User rawFiend = manager.removeProxy(friend);
 			User rawUser = manager.removeProxy(user);
 
-			manager.persist(new UserRelation(userLogin, FRIEND, rawFiend));
+			manager.insert(new UserRelation(userLogin, FRIEND, rawFiend));
 			user.getFriendsCounter().incr();
             manager.update(user);
 
             friend.getFollowersCounter().incr();
             manager.update(friend);
 
-            manager.persist(new UserRelation(friendLogin, FOLLOWER, rawUser));
-            manager.persist(new FollowerLoginLine(friendLogin, user));
+            manager.insert(new UserRelation(friendLogin, FOLLOWER, rawUser));
+            manager.insert(new FollowerLoginLine(friendLogin, user));
 
 			return manager.initAndRemoveProxy(friend);
 		} else {
@@ -101,18 +99,25 @@ public class UserService {
 	}
 
 	public List<User> getFriends(String userLogin, int length) {
-		List<UserRelation> friendLines = manager.sliceQuery(UserRelation.class).partitionComponents(userLogin)
-				.fromClusterings(FRIEND).toClusterings(FRIEND).ordering(OrderingMode.ASCENDING).get(length);
+		List<UserRelation> friendLines = manager.sliceQuery(UserRelation.class)
+                .forSelect()
+                .withPartitionComponents(userLogin)
+				.fromClusterings(FRIEND).toClusterings(FRIEND)
+                .orderByAscending()
+                .get(length);
 
-		return FluentIterable.from(friendLines).transform(userLineToUser).toImmutableList();
+		return FluentIterable.from(friendLines).transform(userLineToUser).toList();
 
 	}
 
 	public List<User> getFollowers(String userLogin, int length) {
-		List<UserRelation> followerLines = manager.sliceQuery(UserRelation.class).partitionComponents(userLogin)
-				.ordering(OrderingMode.ASCENDING).getFirst(length, FOLLOWER);
+		List<UserRelation> followerLines = manager.sliceQuery(UserRelation.class)
+                .forSelect()
+                .withPartitionComponents(userLogin)
+				.orderByAscending()
+                .getFirstMatching(length, FOLLOWER);
 
-		return FluentIterable.from(followerLines).transform(userLineToUser).toImmutableList();
+		return FluentIterable.from(followerLines).transform(userLineToUser).toList();
 
 	}
 

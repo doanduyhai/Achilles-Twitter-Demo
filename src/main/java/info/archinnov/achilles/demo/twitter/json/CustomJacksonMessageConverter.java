@@ -2,8 +2,9 @@ package info.archinnov.achilles.demo.twitter.json;
 
 import javax.annotation.PostConstruct;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 
 /**
@@ -12,7 +13,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
  * @author DuyHai DOAN
  * 
  */
-public class CustomJacksonMessageConverter extends MappingJacksonHttpMessageConverter
+public class CustomJacksonMessageConverter extends MappingJackson2HttpMessageConverter
 {
 	@Autowired
 	private ObjectMapper mapper;

@@ -5,7 +5,6 @@ import info.archinnov.achilles.demo.twitter.entity.TweetLine;
 import info.archinnov.achilles.demo.twitter.entity.compound.TweetKey.LineType;
 import info.archinnov.achilles.demo.twitter.model.TweetModel;
 import info.archinnov.achilles.persistence.PersistenceManager;
-import info.archinnov.achilles.type.OrderingMode;
 import java.util.List;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class LineService
         return FluentIterable
                 .from(timeline)
                 .transform(lineToTweet)
-                .toImmutableList();
+                .toList();
     }
 
     public List<TweetModel> getUserline(String userLogin, int length)
@@ -48,7 +47,7 @@ public class LineService
         return FluentIterable
                 .from(userline)
                 .transform(lineToTweet)
-                .toImmutableList();
+                .toList();
     }
 
     public List<TweetModel> getFavoriteLine(String userLogin, int length)
@@ -58,7 +57,7 @@ public class LineService
         return FluentIterable
                 .from(favoriteline)
                 .transform(lineToTweet)
-                .toImmutableList();
+                .toList();
     }
 
     public List<TweetModel> getMentionLine(String userLogin, int length)
@@ -68,7 +67,7 @@ public class LineService
         return FluentIterable
                 .from(mentionline)
                 .transform(lineToTweet)
-                .toImmutableList();
+                .toList();
     }
 
     public List<TweetModel> getTagLine(String tag, int length)
@@ -78,16 +77,17 @@ public class LineService
         return FluentIterable
                 .from(tagline)
                 .transform(lineToTweet)
-                .toImmutableList();
+                .toList();
 
     }
 
     private List<TweetLine> fetchData(String partitionKey, LineType type, int length) {
         List<TweetLine> line = manager.sliceQuery(TweetLine.class)
-                .partitionComponents(partitionKey)
+                .forSelect()
+                .withPartitionComponents(partitionKey)
                 .fromClusterings(type)
                 .toClusterings(type)
-                .ordering(OrderingMode.DESCENDING)
+                .orderByDescending()
                 .get(length);
         return line;
     }
