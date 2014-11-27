@@ -11,11 +11,12 @@ import org.codehaus.jackson.map.JsonDeserializer;
 
 /**
  * JsonDateDeserializer
- * 
+ *
  * @author DuyHai DOAN
- * 
+ *
  */
 public class JsonDateDeserializer extends JsonDeserializer<Date> {
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     @Override

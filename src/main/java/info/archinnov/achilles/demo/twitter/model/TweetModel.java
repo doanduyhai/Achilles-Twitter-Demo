@@ -14,78 +14,78 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Tweet
- * 
+ *
  * @author DuyHai DOAN
- * 
+ *
  */
 public class TweetModel implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private UUID id;
+    private UUID id;
 
-	private String author;
+    private String author;
 
-	private Long favoritesCount;
+    private Long favoritesCount;
 
-	private String content;
+    private String content;
 
-	@JsonDeserialize(using = JsonDateDeserializer.class)
-	@JsonSerialize(using = JsonDateSerializer.class)
-	private Date creationDate;
+    @JsonDeserialize(using = JsonDateDeserializer.class)
+    @JsonSerialize(using = JsonDateSerializer.class)
+    private Date creationDate;
 
-	public TweetModel() {
-	}
+    public TweetModel() {
+    }
 
-	public TweetModel(UUID id, User creator, String content) {
-		this.id = id;
-		if (id != null) {
+    public TweetModel(UUID id, User creator, String content) {
+        this.id = id;
+        if (id != null) {
 
-			this.creationDate = new Date(UUIDGen.getAdjustedTimestamp(id));
-		}
-		this.content = content;
-		if (creator != null) {
-			this.author = creator.getLogin();
-		}
-	}
+            this.creationDate = new Date(UUIDGen.getAdjustedTimestamp(id));
+        }
+        this.content = content;
+        if (creator != null) {
+            this.author = creator.getLogin();
+        }
+    }
 
-	public UUID getId() {
-		return id;
-	}
+    public UUID getId() {
+        return id;
+    }
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-	public String getAuthor() {
-		return author;
-	}
+    public String getAuthor() {
+        return author;
+    }
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public Long getFavoritesCount() {
-		return favoritesCount;
-	}
+    public Long getFavoritesCount() {
+        return favoritesCount;
+    }
 
-	public void setFavoritesCount(Long favoritesCount) {
-		this.favoritesCount = favoritesCount;
-	}
+    public void setFavoritesCount(Long favoritesCount) {
+        this.favoritesCount = favoritesCount;
+    }
 }

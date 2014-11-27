@@ -5,6 +5,7 @@ import info.archinnov.achilles.embedded.CassandraEmbeddedServerBuilder;
 import info.archinnov.achilles.persistence.PersistenceManager;
 
 public class EmbeddedCassandraFactoryBean extends AbstractFactoryBean<PersistenceManager> {
+
     private static PersistenceManager manager;
 
     static {

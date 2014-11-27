@@ -11,12 +11,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * JsonDateSerializer
- * 
+ *
  * @author DuyHai DOAN
- * 
+ *
  */
 @Component
 public class JsonDateSerializer extends JsonSerializer<Date> {
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     @Override

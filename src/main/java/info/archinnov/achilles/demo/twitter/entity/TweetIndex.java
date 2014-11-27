@@ -9,28 +9,28 @@ import java.util.UUID;
 
 /**
  * AbstractTweetLineIndex
- * 
+ *
  * @author DuyHai DOAN
- * 
+ *
  */
 @Entity(table = "tweet_index")
 public class TweetIndex {
 
-	@EmbeddedId
-	private TweetIndexKey id;
+    @EmbeddedId
+    private TweetIndexKey id;
 
-	public TweetIndex() {
-	}
+    public TweetIndex() {
+    }
 
-	public TweetIndexKey getId() {
-		return id;
-	}
+    public TweetIndexKey getId() {
+        return id;
+    }
 
-	public TweetIndex(UUID tweetId, LineType type, String login) {
-		this.id = new TweetIndexKey(tweetId, type, login);
-	}
+    public TweetIndex(UUID tweetId, LineType type, String login) {
+        this.id = new TweetIndexKey(tweetId, type, login);
+    }
 
-	public void setId(TweetIndexKey id) {
-		this.id = id;
-	}
+    public void setId(TweetIndexKey id) {
+        this.id = id;
+    }
 }
