@@ -23,181 +23,181 @@ import org.springframework.stereotype.Service;
 
 /**
  * TweetAchillesService
- * 
+ *
  * @author DuyHai DOAN
- * 
+ *
  */
 @Service
 public class TweetService {
 
-	@Inject
-	private PersistenceManager manager;
+    @Inject
+    private PersistenceManager manager;
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private UserService userService;
 
-	@Inject
-	private TweetParsingService tweetParsingService;
+    @Inject
+    private TweetParsingService tweetParsingService;
 
-	public UUID createTweet(String authorLogin, String content) {
-		User author = manager.find(User.class, authorLogin);
+    public UUID createTweet(String authorLogin, String content) {
+        User author = manager.find(User.class, authorLogin);
 
-		if (author == null) {
-			throw new IllegalArgumentException("User with login '" + authorLogin + "' does no exist");
-		}
+        if (author == null) {
+            throw new IllegalArgumentException("User with login '" + authorLogin + "' does no exist");
+        }
 
-		UUID uuid = UUIDGen.getTimeUUID();
+        UUID uuid = UUIDGen.getTimeUUID();
 
-		TweetModel tweetModel = new TweetModel(uuid, author, content);
+        TweetModel tweetModel = new TweetModel(uuid, author, content);
 
-		// Initialize tweetIndex entity
-		Tweet tweet = manager.find(Tweet.class, tweetModel.getId());
-		if (tweet == null) {
-			manager.insert(new Tweet(tweetModel.getId(), tweetModel));
-		}
+        // Initialize tweetIndex entity
+        Tweet tweet = manager.find(Tweet.class, tweetModel.getId());
+        if (tweet == null) {
+            manager.insert(new Tweet(tweetModel.getId(), tweetModel));
+        }
 
-		spreadTweetCreation(tweetModel, author.getLogin());
-		spreadTags(tweetModel);
-		spreadUserMention(tweetModel);
+        spreadTweetCreation(tweetModel, author.getLogin());
+        spreadTags(tweetModel);
+        spreadUserMention(tweetModel);
 
-		author.getTweetsCounter().incr();
+        author.getTweetsCounter().incr();
 
         manager.update(author);
 
-		return uuid;
-	}
+        return uuid;
+    }
 
-	public TweetModel getTweet(String tweetId) {
-		TweetModel tweetModel = null;
-		Tweet tweet = manager.find(Tweet.class, UUID.fromString(tweetId));
-		if (tweet != null) {
-			tweetModel = tweet.getTweetModel();
-			tweetModel.setFavoritesCount(tweet.getFavoritesCount().get());
-		}
-		return tweetModel;
-	}
+    public TweetModel getTweet(String tweetId) {
+        TweetModel tweetModel = null;
+        Tweet tweet = manager.find(Tweet.class, UUID.fromString(tweetId));
+        if (tweet != null) {
+            tweetModel = tweet.getTweetModel();
+            tweetModel.setFavoritesCount(tweet.getFavoritesCount().get());
+        }
+        return tweetModel;
+    }
 
-	public Tweet fetchTweetIndex(String tweetId) {
-		Tweet tweet = manager.find(Tweet.class, UUID.fromString(tweetId));
-		if (tweet == null) {
-			throw new IllegalArgumentException("Cannot find tweet with id '" + tweetId + "' to remove");
-		}
-		return tweet;
-	}
+    public Tweet fetchTweetIndex(String tweetId) {
+        Tweet tweet = manager.find(Tweet.class, UUID.fromString(tweetId));
+        if (tweet == null) {
+            throw new IllegalArgumentException("Cannot find tweet with id '" + tweetId + "' to remove");
+        }
+        return tweet;
+    }
 
-	public TweetModel removeTweet(String tweetId) {
+    public TweetModel removeTweet(String tweetId) {
 
-		Tweet tweet = fetchTweetIndex(tweetId);
+        Tweet tweet = fetchTweetIndex(tweetId);
 
-		TweetModel tweetModel = tweet.getTweetModel();
-		UUID id = tweetModel.getId();
+        TweetModel tweetModel = tweet.getTweetModel();
+        UUID id = tweetModel.getId();
 
-		User user = manager.find(User.class, tweetModel.getAuthor());
-		manager.removeById(Tweet.class, id);
+        User user = manager.find(User.class, tweetModel.getAuthor());
+        manager.deleteById(Tweet.class, id);
 
         user.getTweetsCounter().decr();
         manager.update(user);
 
         spreadTweetRemoval(id);
 
-        manager.remove(tweet);
+        manager.delete(tweet);
 
-		return tweetModel;
-	}
+        return tweetModel;
+    }
 
-	private void spreadTweetCreation(TweetModel tweetModel, String userLogin) {
+    private void spreadTweetCreation(TweetModel tweetModel, String userLogin) {
 
-		// Add current tweet to user timeline & userline
-		manager.insert(new TweetLine(userLogin, USERLINE, tweetModel));
-		manager.insert(new TweetLine(userLogin, TIMELINE, tweetModel));
+        // Add current tweet to user timeline & userline
+        manager.insert(new TweetLine(userLogin, USERLINE, tweetModel));
+        manager.insert(new TweetLine(userLogin, TIMELINE, tweetModel));
 
-		manager.insert(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
-		manager.insert(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
+        manager.insert(new TweetIndex(tweetModel.getId(), USERLINE, userLogin));
+        manager.insert(new TweetIndex(tweetModel.getId(), TIMELINE, userLogin));
 
-		Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class)
+        Iterator<FollowerLoginLine> followersIter = manager.sliceQuery(FollowerLoginLine.class)
                 .forIteration()
                 .withPartitionComponents(userLogin)
-				.iterator(100);
+                .iterator(100);
 
-		while (followersIter.hasNext()) {
-			String followerLogin = followersIter.next().getId().getLogin();
+        while (followersIter.hasNext()) {
+            String followerLogin = followersIter.next().getId().getLogin();
 
-			// Add tweet to follower timeline
-			manager.insert(new TweetLine(followerLogin, TIMELINE, tweetModel));
+            // Add tweet to follower timeline
+            manager.insert(new TweetLine(followerLogin, TIMELINE, tweetModel));
 
-			// Index current tweet as in follower timeline
-			manager.insert(new TweetIndex(tweetModel.getId(), TIMELINE, followerLogin));
-		}
-	}
+            // Index current tweet as in follower timeline
+            manager.insert(new TweetIndex(tweetModel.getId(), TIMELINE, followerLogin));
+        }
+    }
 
-	private void spreadTags(TweetModel tweetModel) {
-		Set<String> extractedTags = tweetParsingService.extractTags(tweetModel.getContent());
+    private void spreadTags(TweetModel tweetModel) {
+        Set<String> extractedTags = tweetParsingService.extractTags(tweetModel.getContent());
 
-		for (String tag : extractedTags) {
-			// Add tweet to tagline for each found tag
-			manager.insert(new TweetLine(tag, TAGLINE, tweetModel));
+        for (String tag : extractedTags) {
+            // Add tweet to tagline for each found tag
+            manager.insert(new TweetLine(tag, TAGLINE, tweetModel));
 
-			manager.insert(new TweetIndex(tweetModel.getId(), TAGLINE, tag));
-		}
-	}
+            manager.insert(new TweetIndex(tweetModel.getId(), TAGLINE, tag));
+        }
+    }
 
-	private void spreadUserMention(TweetModel tweetModel) {
-		Set<String> extractedLogins = tweetParsingService.extractLogins(tweetModel.getContent());
+    private void spreadUserMention(TweetModel tweetModel) {
+        Set<String> extractedLogins = tweetParsingService.extractLogins(tweetModel.getContent());
 
-		for (String userLogin : extractedLogins) {
-			User user = manager.find(User.class, userLogin);
-			if (user != null) {
-				manager.insert(new TweetIndex(tweetModel.getId(), MENTIONLINE, userLogin));
+        for (String userLogin : extractedLogins) {
+            User user = manager.find(User.class, userLogin);
+            if (user != null) {
+                manager.insert(new TweetIndex(tweetModel.getId(), MENTIONLINE, userLogin));
 
-				// Add tweet to user's mention line for each login found
-				manager.insert(new TweetLine(userLogin, MENTIONLINE, tweetModel));
+                // Add tweet to user's mention line for each login found
+                manager.insert(new TweetLine(userLogin, MENTIONLINE, tweetModel));
 
-				// Increment user mention counter
-				user.getMentionsCounter().incr();
+                // Increment user mention counter
+                user.getMentionsCounter().incr();
                 manager.update(user);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	private void spreadTweetRemoval(UUID tweetId) {
-		// Retrieve tweet indexes
-		Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class)
+    private void spreadTweetRemoval(UUID tweetId) {
+        // Retrieve tweet indexes
+        Iterator<TweetIndex> tweetIndexIter = manager.sliceQuery(TweetIndex.class)
                 .forIteration()
                 .withPartitionComponents(tweetId)
                 .iterator(100);
 
-		while (tweetIndexIter.hasNext()) {
-			TweetIndexKey tweetIndex = tweetIndexIter.next().getId();
-			LineType type = tweetIndex.getType();
-			String userLoginOrTag = tweetIndex.getLoginOrTag();
+        while (tweetIndexIter.hasNext()) {
+            TweetIndexKey tweetIndex = tweetIndexIter.next().getId();
+            LineType type = tweetIndex.getType();
+            String userLoginOrTag = tweetIndex.getLoginOrTag();
 
-			switch (type) {
-			case USERLINE:
-				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, USERLINE, tweetId));
-				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, USERLINE, userLoginOrTag));
-				break;
+            switch (type) {
+                case USERLINE:
+                    manager.deleteById(TweetLine.class, new TweetKey(userLoginOrTag, USERLINE, tweetId));
+                    manager.deleteById(TweetIndex.class, new TweetIndexKey(tweetId, USERLINE, userLoginOrTag));
+                    break;
 
-			case TIMELINE:
-				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, TIMELINE, tweetId));
-				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, TIMELINE, userLoginOrTag));
-				break;
+                case TIMELINE:
+                    manager.deleteById(TweetLine.class, new TweetKey(userLoginOrTag, TIMELINE, tweetId));
+                    manager.deleteById(TweetIndex.class, new TweetIndexKey(tweetId, TIMELINE, userLoginOrTag));
+                    break;
 
-			case FAVORITELINE:
-				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, FAVORITELINE, tweetId));
-				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, FAVORITELINE, userLoginOrTag));
-				break;
+                case FAVORITELINE:
+                    manager.deleteById(TweetLine.class, new TweetKey(userLoginOrTag, FAVORITELINE, tweetId));
+                    manager.deleteById(TweetIndex.class, new TweetIndexKey(tweetId, FAVORITELINE, userLoginOrTag));
+                    break;
 
-			case MENTIONLINE:
-				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, MENTIONLINE, tweetId));
-				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, MENTIONLINE, userLoginOrTag));
-				break;
+                case MENTIONLINE:
+                    manager.deleteById(TweetLine.class, new TweetKey(userLoginOrTag, MENTIONLINE, tweetId));
+                    manager.deleteById(TweetIndex.class, new TweetIndexKey(tweetId, MENTIONLINE, userLoginOrTag));
+                    break;
 
-			case TAGLINE:
-				manager.removeById(TweetLine.class, new TweetKey(userLoginOrTag, TAGLINE, tweetId));
-				manager.removeById(TweetIndex.class, new TweetIndexKey(tweetId, TAGLINE, userLoginOrTag));
-				break;
-			}
-		}
+                case TAGLINE:
+                    manager.deleteById(TweetLine.class, new TweetKey(userLoginOrTag, TAGLINE, tweetId));
+                    manager.deleteById(TweetIndex.class, new TweetIndexKey(tweetId, TAGLINE, userLoginOrTag));
+                    break;
+            }
+        }
 
-	}
+    }
 }

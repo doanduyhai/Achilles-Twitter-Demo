@@ -12,8 +12,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 
 @Service
-public class LineService
-{
+public class LineService {
 
     @Inject
     private UserService userService;
@@ -24,14 +23,12 @@ public class LineService
     private Function<TweetLine, TweetModel> lineToTweet = new Function<TweetLine, TweetModel>() {
 
         @Override
-        public TweetModel apply(TweetLine line)
-        {
+        public TweetModel apply(TweetLine line) {
             return line.getTweetModel();
         }
     };
 
-    public List<TweetModel> getTimeline(String userLogin, int length)
-    {
+    public List<TweetModel> getTimeline(String userLogin, int length) {
         List<TweetLine> timeline = fetchData(userLogin, TIMELINE, length);
 
         return FluentIterable
@@ -40,8 +37,7 @@ public class LineService
                 .toList();
     }
 
-    public List<TweetModel> getUserline(String userLogin, int length)
-    {
+    public List<TweetModel> getUserline(String userLogin, int length) {
         List<TweetLine> userline = fetchData(userLogin, USERLINE, length);
 
         return FluentIterable
@@ -50,8 +46,7 @@ public class LineService
                 .toList();
     }
 
-    public List<TweetModel> getFavoriteLine(String userLogin, int length)
-    {
+    public List<TweetModel> getFavoriteLine(String userLogin, int length) {
         List<TweetLine> favoriteline = fetchData(userLogin, FAVORITELINE, length);
 
         return FluentIterable
@@ -60,8 +55,7 @@ public class LineService
                 .toList();
     }
 
-    public List<TweetModel> getMentionLine(String userLogin, int length)
-    {
+    public List<TweetModel> getMentionLine(String userLogin, int length) {
         List<TweetLine> mentionline = fetchData(userLogin, MENTIONLINE, length);
 
         return FluentIterable
@@ -70,8 +64,7 @@ public class LineService
                 .toList();
     }
 
-    public List<TweetModel> getTagLine(String tag, int length)
-    {
+    public List<TweetModel> getTagLine(String tag, int length) {
         List<TweetLine> tagline = fetchData(tag, TAGLINE, length);
 
         return FluentIterable

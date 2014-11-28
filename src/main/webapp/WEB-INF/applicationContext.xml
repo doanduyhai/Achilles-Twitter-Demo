@@ -1,67 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.2.xsd
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd"
-		>
+>
 
 
-	<!-- Scans within the base package of the application for @Components to configure as beans -->
-	<context:component-scan base-package="info.archinnov.achilles.demo.twitter" />
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
-	
-	<mvc:resources location="/" mapping="/index.html" /> 
-	<mvc:resources location="/assets/images/" mapping="/assets/images/**" /> 
-	<mvc:resources location="/assets/font/" mapping="/assets/font/**" /> 
-	<mvc:resources location="/assets/views/" mapping="/assets/views/**" /> 
-	<mvc:resources location="/assets/css/" mapping="/assets/css/**" />
-	<mvc:resources location="/assets/scripts/" mapping="/assets/scripts/**" />
-	<mvc:resources location="/assets/vendors/" mapping="/assets/vendors/**" />
-	
-	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
-			<property name="supportedMediaTypes">
-				<list>
-					<value>text/plain;charset=UTF-8</value>
-					<value>*/*</value>
-				</list>
-			</property>
-			<property name="writeAcceptCharset" value="false"/>
-	</bean>
-	<bean id="objectMapperFactoryBean" class="info.archinnov.achilles.demo.twitter.json.ObjectMapperFactoryBean" />
-	<bean id="defaultMessageConverters" class="java.util.ArrayList">
-		<constructor-arg>
-	        <list>
-	        	<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
-	        	<ref bean="stringHttpMessageConverter"/>
-				<bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
-	        	<bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
-	        	<bean class="info.archinnov.achilles.demo.twitter.json.CustomJacksonMessageConverter"/>
-	        </list>
-	    </constructor-arg>   
-	</bean>
-	
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<property name="messageConverters" ref="defaultMessageConverters"/>
-	</bean>
+    <!-- Scans within the base package of the application for @Components to configure as beans -->
+    <context:component-scan base-package="info.archinnov.achilles.demo.twitter" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+
+    <mvc:resources location="/" mapping="/index.html" />
+    <mvc:resources location="/assets/images/" mapping="/assets/images/**" />
+    <mvc:resources location="/assets/font/" mapping="/assets/font/**" />
+    <mvc:resources location="/assets/views/" mapping="/assets/views/**" />
+    <mvc:resources location="/assets/css/" mapping="/assets/css/**" />
+    <mvc:resources location="/assets/scripts/" mapping="/assets/scripts/**" />
+    <mvc:resources location="/assets/vendors/" mapping="/assets/vendors/**" />
+
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain;charset=UTF-8</value>
+                <value>*/*</value>
+            </list>
+        </property>
+        <property name="writeAcceptCharset" value="false"/>
+    </bean>
+    <bean id="objectMapperFactoryBean" class="info.archinnov.achilles.demo.twitter.json.ObjectMapperFactoryBean" />
+    <bean id="defaultMessageConverters" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+                <ref bean="stringHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+                <bean class="info.archinnov.achilles.demo.twitter.json.CustomJacksonMessageConverter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters" ref="defaultMessageConverters"/>
+    </bean>
 
 
-    <bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.demo.twitter.embedded.EmbeddedCassandraFactoryBean"/>
-
-	<!--<bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.integration.spring.CQLPersistenceManagerFactoryBean">-->
-		<!--<property name="entityPackages" value="info.archinnov.achilles.demo.twitter.entity"/>-->
-		<!--<property name="contactPoints" value="localhost"/>-->
-		<!--<property name="port" value="9042"/>-->
-		<!--<property name="keyspaceName" value="achilles"/>-->
-		<!--<property name="objectMapper" ref="objectMapperFactoryBean"/>-->
-		<!--<property name="consistencyLevelReadDefault" value="ONE"/>-->
-		<!--<property name="consistencyLevelWriteDefault" value="ONE"/>-->
-		<!--<property name="forceColumnFamilyCreation" value="true" />-->
-	<!--</bean>	-->
+    <!-- <bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.demo.twitter.embedded.EmbeddedCassandraFactoryBean"/>-->
+    <bean id="achillesEntityManagerFactory" class="info.archinnov.achilles.demo.twitter.embedded.WildFlyPersistenceManagerFactoryBean" />
 </beans>

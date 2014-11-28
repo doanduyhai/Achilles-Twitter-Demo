@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/db", produces = "application/json")
 public class DbController {
 
-	@Inject
-	private DbService dbService;
+    @Inject
+    private DbService dbService;
 
-	@RequestMapping(value = "/reset", method = RequestMethod.PUT)
-	@ResponseBody
-	public void resetDb() {
-		dbService.resetDb();
-	}
+    @RequestMapping(value = "/reset", method = RequestMethod.PUT)
+    @ResponseBody
+    public void resetDb() {
+        dbService.resetDb();
+    }
 }

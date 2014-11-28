@@ -46,8 +46,8 @@ public class FavoriteService {
         TweetLine favoriteLine = manager.find(TweetLine.class, new TweetKey(userLogin, FAVORITELINE, id));
 
         if (favoriteLine != null) {
-            manager.remove(favoriteLine);
-            manager.removeById(TweetIndex.class, new TweetIndexKey(id, FAVORITELINE, userLogin));
+            manager.delete(favoriteLine);
+            manager.deleteById(TweetIndex.class, new TweetIndexKey(id, FAVORITELINE, userLogin));
             tweet.getFavoritesCount().decr();
             manager.update(tweet);
         }
